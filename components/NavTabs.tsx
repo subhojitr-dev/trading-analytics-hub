@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
+  { href: "/overview", label: "Overview" },
   { href: "/stock-analysis", label: "Stock Analysis" },
   { href: "/trading-bot", label: "Trading Bot Trades" },
 ];
