@@ -10,6 +10,7 @@ export interface StockAnalysisEntry {
   year: number;
   month: number; // 1-12
   week: number;
+  kind: 'report' | 'error';
 }
 
 export interface TradeEntry {
@@ -35,7 +36,7 @@ async function listAll(prefix: string): Promise<{ pathname: string }[]> {
   return out;
 }
 
-const STOCK_FILENAME_RE = /Morning_Brief_(\d{4})-(\d{2})-(\d{2})\.pdf$/;
+const STOCK_FILENAME_RE = /Morning_Brief_(\d{4})-(\d{2})-(\d{2})\.(pdf|error)$/;
 
 export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
   const blobs = await listAll(STOCK_PREFIX);
@@ -43,7 +44,7 @@ export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
   for (const { pathname } of blobs) {
     const match = STOCK_FILENAME_RE.exec(pathname);
     if (!match) continue;
-    const [, y, m, d] = match;
+    const [, y, m, d, ext] = match;
     const year = Number(y);
     const month = Number(m);
     const date = `${y}-${m}-${d}`;
@@ -53,6 +54,7 @@ export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
       year,
       month,
       week: isoWeek(new Date(year, month - 1, Number(d))),
+      kind: ext === 'pdf' ? 'report' : 'error',
     });
   }
   entries.sort((a, b) => b.date.localeCompare(a.date));

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import DateTreeNav from "./DateTreeNav";
 import TradeCard from "./TradeCard";
+import StrategyChip from "./StrategyChip";
 import type { YearGroup } from "@/lib/tree";
 import type { TradeEntry } from "@/lib/blob";
 import { formatDateLong } from "@/lib/date";
@@ -60,19 +61,14 @@ export default function TradingBotView({
       <aside className="w-64 shrink-0 space-y-4">
         <div>
           <p className="mb-1 text-xs font-medium uppercase text-zinc-500">Strategy</p>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-2">
             {strategies.map((s) => (
-              <button
+              <StrategyChip
                 key={s}
-                onClick={() => toggleStrategy(s)}
-                className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                  strategyFilter.has(s)
-                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                    : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                }`}
-              >
-                {s}
-              </button>
+                strategy={s}
+                active={strategyFilter.has(s)}
+                onToggle={() => toggleStrategy(s)}
+              />
             ))}
           </div>
         </div>

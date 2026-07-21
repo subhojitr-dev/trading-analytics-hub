@@ -7,7 +7,7 @@
 //
 // Requires BLOB_READ_WRITE_TOKEN in the environment.
 
-import { list, put } from "@vercel/blob";
+import { list, put, del } from "@vercel/blob";
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
@@ -20,6 +20,13 @@ const TRADES_PREFIX = "trading-bot/";
 const STOCK_FILENAME_RE = /^Morning_Brief_(\d{4})-(\d{2})-(\d{2})\.pdf$/;
 const TRADE_FILENAME_RE = /^(\d{4})(\d{2})(\d{2})_\d{6}_TradingBot_[A-Za-z]+_.+\.html$/;
 
+// generate_pdf_report.py falls back to a short "Session data not available"
+// page when the day's session JSON is missing. That fallback PDF is always
+// ~2.1KB; real reports are always 6KB+. Uploading it as a real report would
+// mean the site shows a "broken" viewer for that date, so it's diverted to
+// an .error marker instead of being uploaded as a .pdf.
+const STOCK_ERROR_MAX_BYTES = 4000;
+
 async function listExistingPathnames(prefix) {
   const pathnames = new Set();
   let cursor;
@@ -31,25 +38,37 @@ async function listExistingPathnames(prefix) {
   return pathnames;
 }
 
-async function findStockUploads(existing) {
+async function planStockActions(existing) {
   const uploads = [];
+  const errorMarkers = [];
+  const staleDeletes = [];
+
   let filenames;
   try {
     filenames = await readdir(STOCK_SRC_DIR);
   } catch (err) {
     console.warn(`Skipping stock analysis: cannot read ${STOCK_SRC_DIR} (${err.message})`);
-    return uploads;
+    return { uploads, errorMarkers, staleDeletes };
   }
 
   for (const filename of filenames) {
     const match = STOCK_FILENAME_RE.exec(filename);
     if (!match) continue;
     const [, yyyy, mm] = match;
-    const pathname = `${STOCK_PREFIX}${yyyy}/${mm}/${filename}`;
-    if (existing.has(pathname)) continue;
-    uploads.push({ localPath: path.join(STOCK_SRC_DIR, filename), pathname });
+    const localPath = path.join(STOCK_SRC_DIR, filename);
+    const info = await stat(localPath);
+    const pdfPathname = `${STOCK_PREFIX}${yyyy}/${mm}/${filename}`;
+    const errorPathname = pdfPathname.replace(/\.pdf$/, ".error");
+
+    if (info.size < STOCK_ERROR_MAX_BYTES) {
+      if (existing.has(pdfPathname)) staleDeletes.push(pdfPathname);
+      if (!existing.has(errorPathname)) errorMarkers.push(errorPathname);
+    } else {
+      if (existing.has(errorPathname)) staleDeletes.push(errorPathname);
+      if (!existing.has(pdfPathname)) uploads.push({ localPath, pathname: pdfPathname });
+    }
   }
-  return uploads;
+  return { uploads, errorMarkers, staleDeletes };
 }
 
 async function walk(dir) {
@@ -119,16 +138,30 @@ async function main() {
     listExistingPathnames(TRADES_PREFIX),
   ]);
 
-  const [stockUploads, tradeUploads] = await Promise.all([
-    findStockUploads(existingStock),
+  const [stockPlan, tradeUploads] = await Promise.all([
+    planStockActions(existingStock),
     findTradeUploads(existingTrades),
   ]);
 
-  const stockCount = await uploadAll(stockUploads);
+  if (stockPlan.staleDeletes.length > 0) {
+    await del(stockPlan.staleDeletes);
+    console.log(`Removed ${stockPlan.staleDeletes.length} stale stock analysis blob(s).`);
+  }
+
+  for (const pathname of stockPlan.errorMarkers) {
+    await put(pathname, "Report generation failed: no session data was available.", {
+      access: "private",
+      addRandomSuffix: false,
+      allowOverwrite: false,
+    });
+    console.log(`Marked failed report: ${pathname}`);
+  }
+
+  const stockCount = await uploadAll(stockPlan.uploads);
   const tradeCount = await uploadAll(tradeUploads);
 
   console.log(
-    `Sync complete: ${stockCount} stock analysis file(s), ${tradeCount} trade file(s) uploaded.`
+    `Sync complete: ${stockCount} stock analysis file(s), ${stockPlan.errorMarkers.length} failed-report marker(s), ${tradeCount} trade file(s) uploaded.`
   );
 }
 
