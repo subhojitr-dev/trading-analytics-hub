@@ -25,7 +25,7 @@ export interface TradeEntry {
   detail: string; // human-readable label derived from the filename
 }
 
-async function listAll(prefix: string): Promise<{ pathname: string }[]> {
+export async function listAll(prefix: string): Promise<{ pathname: string }[]> {
   const out: { pathname: string }[] = [];
   let cursor: string | undefined;
   do {
