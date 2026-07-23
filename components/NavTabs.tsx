@@ -15,14 +15,14 @@ export default function NavTabs() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1">
+    <nav className="flex gap-1 overflow-x-auto">
       {TABS.map((tab) => {
         const active = pathname?.startsWith(tab.href);
         return (
           <Link
             key={tab.href}
             href={tab.href}
-            className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+            className={`shrink-0 whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ${
               active
                 ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
                 : "hover:bg-zinc-100 dark:hover:bg-zinc-800"

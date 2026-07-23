@@ -32,7 +32,7 @@ export default function StrategyChip({
         {strategy}
       </button>
       {hovered && info && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-72 rounded-lg border border-zinc-200 bg-white p-3 text-left shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="absolute left-0 top-full z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-zinc-200 bg-white p-3 text-left shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
           <p className="mb-2 text-sm font-semibold">{info.label}</p>
           <info.Diagram />
           <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">{info.blurb}</p>

@@ -55,8 +55,8 @@ export default function TradingBotView({
   }, [activeFilters, entries, search, strategyFilter]);
 
   return (
-    <div className="flex gap-6">
-      <aside className="w-64 shrink-0 space-y-4">
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <aside className="w-full space-y-4 lg:w-64 lg:shrink-0">
         <div>
           <p className="mb-1 text-xs font-medium uppercase text-zinc-500">Strategy</p>
           <div className="flex flex-wrap gap-2">

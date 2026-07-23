@@ -20,8 +20,8 @@ export default function StockAnalysisView({
   const item = selected?.items[0];
 
   return (
-    <div className="flex gap-6">
-      <aside className="w-64 shrink-0">
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <aside className="w-full lg:w-64 lg:shrink-0">
         <Link
           href="/stock-analysis/criteria"
           className="mb-4 inline-block text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
