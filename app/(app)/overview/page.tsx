@@ -51,6 +51,37 @@ export default function OverviewPage() {
         </p>
       </section>
 
+      <section className="mb-8">
+        <h2 className="mb-2 text-lg font-semibold">How the Trading Bot Trades display works</h2>
+        <p className="mb-3 text-sm text-zinc-600 dark:text-zinc-400">
+          The strategy chips and the date tree are two separate ways to look
+          at the same trades, and only one is active at a time:
+        </p>
+        <ul className="list-disc space-y-2 pl-5 text-sm text-zinc-600 dark:text-zinc-400">
+          <li>
+            <strong>Nothing selected</strong> — only the date tree shows. Pick a
+            date to see every trade from that day.
+          </li>
+          <li>
+            <strong>Click a strategy chip</strong> — shows every trade for that
+            strategy, across every stock and every date, and nothing else.
+            Clicking a different chip switches to it; clicking the active one
+            again clears the filter and goes back to date-browsing.
+          </li>
+          <li>
+            <strong>Strategy chip + symbol/action search</strong> — typing in
+            the search box while a strategy is selected narrows further, to
+            just that strategy for that stock or action (e.g. Strangle + AMZN
+            shows only Strangle trades on AMZN).
+          </li>
+          <li>
+            <strong>Clicking a date</strong> always clears any active
+            strategy/search filter first, so date-browsing and
+            strategy-filtering never mix.
+          </li>
+        </ul>
+      </section>
+
       <section>
         <h2 className="mb-2 text-lg font-semibold">Where errors are logged</h2>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
