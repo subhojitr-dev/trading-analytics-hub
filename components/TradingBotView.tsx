@@ -17,29 +17,27 @@ export default function TradingBotView({
   entries: TradeEntry[];
   strategies: string[];
 }) {
-  const firstEntry = tree[0]?.months[0]?.weeks[0]?.dates[0];
-  const [selected, setSelected] = useState<{ date: string; items: TradeEntry[] } | null>(
-    firstEntry ? { date: firstEntry.date, items: firstEntry.items } : null
-  );
-  const [strategyFilter, setStrategyFilter] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<{ date: string; items: TradeEntry[] } | null>(null);
+  const [strategyFilter, setStrategyFilter] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  const activeFilters = strategyFilter.size > 0 || search.trim() !== "";
+  const activeFilters = strategyFilter !== null || search.trim() !== "";
 
   function toggleStrategy(strategy: string) {
-    setStrategyFilter((prev) => {
-      const next = new Set(prev);
-      if (next.has(strategy)) next.delete(strategy);
-      else next.add(strategy);
-      return next;
-    });
+    setStrategyFilter((prev) => (prev === strategy ? null : strategy));
+  }
+
+  function selectDate(date: string, items: TradeEntry[]) {
+    setSelected({ date, items });
+    setStrategyFilter(null);
+    setSearch("");
   }
 
   const filteredByDate = useMemo(() => {
     if (!activeFilters) return null;
     const query = search.trim().toLowerCase();
     const matches = entries.filter((e) => {
-      if (strategyFilter.size > 0 && !strategyFilter.has(e.strategy)) return false;
+      if (strategyFilter !== null && e.strategy !== strategyFilter) return false;
       if (query === "") return true;
       return (
         e.detail.toLowerCase().includes(query) ||
@@ -66,7 +64,7 @@ export default function TradingBotView({
               <StrategyChip
                 key={s}
                 strategy={s}
-                active={strategyFilter.has(s)}
+                active={strategyFilter === s}
                 onToggle={() => toggleStrategy(s)}
               />
             ))}
@@ -88,7 +86,7 @@ export default function TradingBotView({
           <DateTreeNav
             tree={tree}
             selectedDate={activeFilters ? null : selected?.date ?? null}
-            onSelectDate={(date, items) => setSelected({ date, items })}
+            onSelectDate={selectDate}
             countLabel={(items) => String(items.length)}
           />
         </div>
@@ -122,7 +120,9 @@ export default function TradingBotView({
             </div>
           </div>
         ) : (
-          <p className="text-sm text-zinc-500">No trades found yet.</p>
+          <p className="text-sm text-zinc-500">
+            Select a strategy above, or a date from the tree, to see trades.
+          </p>
         )}
       </section>
     </div>
