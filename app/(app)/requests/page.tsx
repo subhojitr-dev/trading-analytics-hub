@@ -1,4 +1,4 @@
-import { listAnalysisRequests, type AnalysisRequest } from "@/lib/requests";
+import { listAnalysisRequests, filterWithinDays, type AnalysisRequest } from "@/lib/requests";
 
 export const dynamic = "force-dynamic";
 
@@ -51,8 +51,7 @@ export default async function RequestsPage({
 }) {
   const params = await searchParams;
   const allRequests = await listAnalysisRequests();
-  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-  const requests = allRequests.filter((r) => new Date(r.submittedAt).getTime() >= weekAgo);
+  const requests = filterWithinDays(allRequests, 7);
 
   return (
     <div className="mx-auto max-w-2xl">

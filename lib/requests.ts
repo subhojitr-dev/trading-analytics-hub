@@ -38,3 +38,8 @@ export async function listAnalysisRequests(): Promise<AnalysisRequest[]> {
   records.sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
   return records;
 }
+
+export function filterWithinDays(records: AnalysisRequest[], days: number): AnalysisRequest[] {
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return records.filter((r) => new Date(r.submittedAt).getTime() >= cutoff);
+}

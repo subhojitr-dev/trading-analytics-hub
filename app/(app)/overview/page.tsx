@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function OverviewPage() {
   return (
     <div className="mx-auto max-w-3xl">
@@ -37,7 +39,7 @@ export default function OverviewPage() {
         </div>
       </section>
 
-      <section>
+      <section className="mb-8">
         <h2 className="mb-2 text-lg font-semibold">How the data gets here</h2>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
           A separate sync script — also scheduled via Windows Task Scheduler,
@@ -46,6 +48,34 @@ export default function OverviewPage() {
           storage. This site only ever reads from that storage; it never talks
           to either application directly, and nothing on this site executes
           trades or generates reports.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-lg font-semibold">Where errors are logged</h2>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          When the Morning Brief fails to generate, the TradingView Morning
+          Brief application writes the reason to a small text file on the PC:
+        </p>
+        <p className="my-2 rounded-md bg-zinc-100 p-2 font-mono text-xs dark:bg-zinc-900">
+          C:\Users\subho\tradingview-mcp-jackson\logs\
+          <wbr />
+          {"{date}"}-morning-ERROR.txt
+        </p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          (falling back to <span className="font-mono">{"{date}"}-continue-ERROR.txt</span>{" "}
+          if that one is missing). A full run trace for the same day lives
+          alongside it in <span className="font-mono">{"{date}"}.log</span> for deeper
+          digging. The sync script reads that short reason and carries it over
+          — it shows up inline wherever a failed date is selected on the{" "}
+          <Link href="/stock-analysis" className="text-blue-600 hover:underline dark:text-blue-400">
+            Stock Analysis
+          </Link>{" "}
+          tab, and every failed date is listed together on the{" "}
+          <Link href="/errors" className="text-blue-600 hover:underline dark:text-blue-400">
+            Errors
+          </Link>{" "}
+          tab.
         </p>
       </section>
     </div>

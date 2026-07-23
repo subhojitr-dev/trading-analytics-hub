@@ -43,9 +43,11 @@ export default function StockAnalysisView({
               <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
                 <p className="font-medium">⚠ Report unavailable for this date</p>
                 <p className="mt-1">
-                  The Morning Brief generation failed — no session data was available
-                  when the report ran that day. This usually resolves on its own the
-                  next time the report is generated; check back tomorrow.
+                  The Morning Brief generation failed. This usually resolves on its own
+                  the next time the report is generated; check back tomorrow.
+                </p>
+                <p className="mt-2 font-mono text-xs opacity-80">
+                  Reason: {item.reason ?? "not logged"}
                 </p>
               </div>
             ) : (

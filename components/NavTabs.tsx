@@ -8,6 +8,7 @@ const TABS = [
   { href: "/stock-analysis", label: "Stock Analysis" },
   { href: "/trading-bot", label: "Trading Bot Trades" },
   { href: "/requests", label: "Request Analysis" },
+  { href: "/errors", label: "Errors" },
 ];
 
 export default function NavTabs() {

@@ -1,4 +1,4 @@
-import { list } from '@vercel/blob';
+import { list, get } from '@vercel/blob';
 import { isoWeek } from './date';
 
 export const STOCK_PREFIX = 'stock-analysis/';
@@ -11,6 +11,7 @@ export interface StockAnalysisEntry {
   month: number; // 1-12
   week: number;
   kind: 'report' | 'error';
+  reason?: string;
 }
 
 export interface TradeEntry {
@@ -38,6 +39,18 @@ export async function listAll(prefix: string): Promise<{ pathname: string }[]> {
 
 const STOCK_FILENAME_RE = /Morning_Brief_(\d{4})-(\d{2})-(\d{2})\.(pdf|error)$/;
 
+async function readErrorReason(pathname: string): Promise<string | undefined> {
+  const result = await get(pathname, { access: 'private' });
+  if (!result || result.statusCode !== 200) return undefined;
+  try {
+    const text = await new Response(result.stream).text();
+    const parsed = JSON.parse(text);
+    return typeof parsed.reason === 'string' ? parsed.reason : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
   const blobs = await listAll(STOCK_PREFIX);
   const entries: StockAnalysisEntry[] = [];
@@ -48,13 +61,15 @@ export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
     const year = Number(y);
     const month = Number(m);
     const date = `${y}-${m}-${d}`;
+    const kind = ext === 'pdf' ? 'report' : 'error';
     entries.push({
       pathname,
       date,
       year,
       month,
       week: isoWeek(new Date(year, month - 1, Number(d))),
-      kind: ext === 'pdf' ? 'report' : 'error',
+      kind,
+      reason: kind === 'error' ? await readErrorReason(pathname) : undefined,
     });
   }
   entries.sort((a, b) => b.date.localeCompare(a.date));

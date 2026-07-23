@@ -12,6 +12,7 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 const STOCK_SRC_DIR = "C:\\Users\\subho\\tradingview-mcp-jackson";
+const STOCK_LOGS_DIR = "C:\\Users\\subho\\tradingview-mcp-jackson\\logs";
 const TRADES_SRC_DIR = "C:\\Users\\subho\\tradingbot\\email_archive";
 
 const STOCK_PREFIX = "stock-analysis/";
@@ -38,9 +39,30 @@ async function listExistingPathnames(prefix) {
   return pathnames;
 }
 
+// The morning brief runner writes a small {date}-morning-ERROR.txt (or
+// -continue-ERROR.txt) alongside its full run log whenever a step fails —
+// e.g. "Credit balance is too low", "API Error: 529 Overloaded". That's the
+// actual reason a report didn't generate, so it's read and carried along
+// with the .error marker instead of a generic message.
+async function readErrorReason(dateStr) {
+  const candidates = [
+    path.join(STOCK_LOGS_DIR, `${dateStr}-morning-ERROR.txt`),
+    path.join(STOCK_LOGS_DIR, `${dateStr}-continue-ERROR.txt`),
+  ];
+  for (const candidate of candidates) {
+    try {
+      const text = (await readFile(candidate, "utf8")).trim();
+      if (text) return text;
+    } catch {
+      // try the next candidate
+    }
+  }
+  return null;
+}
+
 async function planStockActions(existing) {
   const uploads = [];
-  const errorMarkers = [];
+  const errorUploads = [];
   const staleDeletes = [];
 
   let filenames;
@@ -48,13 +70,13 @@ async function planStockActions(existing) {
     filenames = await readdir(STOCK_SRC_DIR);
   } catch (err) {
     console.warn(`Skipping stock analysis: cannot read ${STOCK_SRC_DIR} (${err.message})`);
-    return { uploads, errorMarkers, staleDeletes };
+    return { uploads, errorUploads, staleDeletes };
   }
 
   for (const filename of filenames) {
     const match = STOCK_FILENAME_RE.exec(filename);
     if (!match) continue;
-    const [, yyyy, mm] = match;
+    const [, yyyy, mm, dd] = match;
     const localPath = path.join(STOCK_SRC_DIR, filename);
     const info = await stat(localPath);
     const pdfPathname = `${STOCK_PREFIX}${yyyy}/${mm}/${filename}`;
@@ -62,13 +84,16 @@ async function planStockActions(existing) {
 
     if (info.size < STOCK_ERROR_MAX_BYTES) {
       if (existing.has(pdfPathname)) staleDeletes.push(pdfPathname);
-      if (!existing.has(errorPathname)) errorMarkers.push(errorPathname);
+      const reason =
+        (await readErrorReason(`${yyyy}-${mm}-${dd}`)) ??
+        "No session data was available (reason not logged).";
+      errorUploads.push({ pathname: errorPathname, reason });
     } else {
       if (existing.has(errorPathname)) staleDeletes.push(errorPathname);
       if (!existing.has(pdfPathname)) uploads.push({ localPath, pathname: pdfPathname });
     }
   }
-  return { uploads, errorMarkers, staleDeletes };
+  return { uploads, errorUploads, staleDeletes };
 }
 
 async function walk(dir) {
@@ -148,20 +173,21 @@ async function main() {
     console.log(`Removed ${stockPlan.staleDeletes.length} stale stock analysis blob(s).`);
   }
 
-  for (const pathname of stockPlan.errorMarkers) {
-    await put(pathname, "Report generation failed: no session data was available.", {
+  for (const { pathname, reason } of stockPlan.errorUploads) {
+    await put(pathname, JSON.stringify({ reason }), {
       access: "private",
       addRandomSuffix: false,
-      allowOverwrite: false,
+      allowOverwrite: true,
+      contentType: "application/json",
     });
-    console.log(`Marked failed report: ${pathname}`);
+    console.log(`Marked failed report: ${pathname} (${reason})`);
   }
 
   const stockCount = await uploadAll(stockPlan.uploads);
   const tradeCount = await uploadAll(tradeUploads);
 
   console.log(
-    `Sync complete: ${stockCount} stock analysis file(s), ${stockPlan.errorMarkers.length} failed-report marker(s), ${tradeCount} trade file(s) uploaded.`
+    `Sync complete: ${stockCount} stock analysis file(s), ${stockPlan.errorUploads.length} failed-report marker(s), ${tradeCount} trade file(s) uploaded.`
   );
 }
 
