@@ -38,7 +38,19 @@ export default function StockAnalysisView({
       <section className="min-w-0 flex-1">
         {item ? (
           <>
-            <h2 className="mb-3 text-lg font-semibold">{formatDateLong(item.date)}</h2>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold">{formatDateLong(item.date)}</h2>
+              {item.kind !== "error" && (
+                <a
+                  href={`/api/file?path=${encodeURIComponent(item.pathname)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden shrink-0 text-sm font-medium text-blue-600 hover:underline dark:text-blue-400 lg:inline-block"
+                >
+                  Open in new tab ↗
+                </a>
+              )}
+            </div>
             {item.kind === "error" ? (
               <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
                 <p className="font-medium">⚠ Report unavailable for this date</p>
@@ -51,11 +63,26 @@ export default function StockAnalysisView({
                 </p>
               </div>
             ) : (
-              <iframe
-                src={`/api/file?path=${encodeURIComponent(item.pathname)}`}
-                className="h-[80vh] w-full rounded-lg border border-zinc-200 bg-white dark:border-zinc-800"
-                title={`Morning Brief ${item.date}`}
-              />
+              <>
+                <a
+                  href={`/api/file?path=${encodeURIComponent(item.pathname)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-1 rounded-lg border border-zinc-200 bg-white p-8 text-center hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800 lg:hidden"
+                >
+                  <span className="text-base font-medium text-blue-600 dark:text-blue-400">
+                    📄 View Morning Brief PDF ↗
+                  </span>
+                  <span className="text-xs text-zinc-500">
+                    Opens in your phone&apos;s PDF viewer for proper scrolling and zoom.
+                  </span>
+                </a>
+                <iframe
+                  src={`/api/file?path=${encodeURIComponent(item.pathname)}`}
+                  className="hidden h-[70dvh] w-full rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 lg:block"
+                  title={`Morning Brief ${item.date}`}
+                />
+              </>
             )}
           </>
         ) : (
