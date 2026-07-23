@@ -50,7 +50,9 @@ export default async function RequestsPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
-  const requests = await listAnalysisRequests();
+  const allRequests = await listAnalysisRequests();
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const requests = allRequests.filter((r) => new Date(r.submittedAt).getTime() >= weekAgo);
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -131,9 +133,14 @@ export default async function RequestsPage({
         </button>
       </form>
 
-      <h2 className="mb-3 mt-10 text-lg font-semibold">Past requests</h2>
+      <h2 className="mb-1 mt-10 text-lg font-semibold">Past requests</h2>
+      <p className="mb-3 text-xs text-zinc-500">Showing the last 7 days.</p>
       {requests.length === 0 ? (
-        <p className="text-sm text-zinc-500">No requests submitted yet.</p>
+        <p className="text-sm text-zinc-500">
+          {allRequests.length === 0
+            ? "No requests submitted yet."
+            : "No requests in the last 7 days."}
+        </p>
       ) : (
         <div className="space-y-3">
           {requests.map((r) => (
