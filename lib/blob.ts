@@ -1,8 +1,9 @@
 import { list, get } from '@vercel/blob';
-import { isoWeek } from './date';
+import { cache } from 'react';
 
 export const STOCK_PREFIX = 'stock-analysis/';
 export const TRADES_PREFIX = 'trading-bot/';
+export const MANIFEST_PATHNAME = 'manifest.json';
 
 export interface StockAnalysisEntry {
   pathname: string;
@@ -26,6 +27,85 @@ export interface TradeEntry {
   detail: string; // human-readable label derived from the filename
 }
 
+export interface LedgerTrade {
+  strategy: string;
+  symbol: string;
+  trade_type: string;
+  status: 'OPEN' | 'CLOSED';
+  opened_at: string | null;
+  qty: number;
+  entry_price: number | null;
+  current_price: number | null;
+  gain_dollars: number;
+  gain_pct: number;
+  last_updated: string;
+  closed_at: string | null;
+  close_reason: string | null;
+  notes: string;
+}
+
+export interface LedgerEntry extends LedgerTrade {
+  tradeId: string;
+}
+
+interface Manifest {
+  generated_at: string | null;
+  stockAnalysis: StockAnalysisEntry[];
+  trades: TradeEntry[];
+  ledger: { generated_at?: string; trades?: Record<string, LedgerTrade> };
+}
+
+function emptyManifest(): Manifest {
+  return { generated_at: null, stockAnalysis: [], trades: [], ledger: {} };
+}
+
+// The local sync script (scripts/sync.mjs) rebuilds this single blob whenever
+// something actually changes and every page reads it with ONE get() call --
+// this is what replaces the old pattern of calling list() (an expensive
+// "Advanced Operation" against Vercel Blob's Hobby-plan quota) plus a get()
+// per item on every single page view. `cache()` only dedupes within one
+// request/render pass, so a page that needs more than one of the exports
+// below still costs a single fetch, not one per export.
+export const getManifest = cache(async (): Promise<Manifest> => {
+  try {
+    const result = await get(MANIFEST_PATHNAME, { access: 'private' });
+    if (!result || result.statusCode !== 200) return emptyManifest();
+    const text = await new Response(result.stream).text();
+    const parsed = JSON.parse(text) as Partial<Manifest>;
+    return {
+      generated_at: parsed.generated_at ?? null,
+      stockAnalysis: parsed.stockAnalysis ?? [],
+      trades: parsed.trades ?? [],
+      ledger: parsed.ledger ?? {},
+    };
+  } catch {
+    return emptyManifest();
+  }
+});
+
+export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
+  const manifest = await getManifest();
+  return manifest.stockAnalysis;
+}
+
+export async function listTrades(): Promise<TradeEntry[]> {
+  const manifest = await getManifest();
+  return manifest.trades;
+}
+
+export function distinctStrategies(entries: TradeEntry[]): string[] {
+  return Array.from(new Set(entries.map((e) => e.strategy))).sort();
+}
+
+export async function getTradeLedger(): Promise<{ generatedAt: string | null; trades: LedgerEntry[] }> {
+  const manifest = await getManifest();
+  const trades = Object.entries(manifest.ledger.trades ?? {}).map(([tradeId, t]) => ({ tradeId, ...t }));
+  return { generatedAt: manifest.ledger.generated_at ?? null, trades };
+}
+
+// Used by lib/requests.ts (the Request Analysis tab), which manages its own
+// small set of user-submitted files under a separate prefix and still reads
+// Blob live -- that feature is low-traffic and wasn't part of this cleanup.
 export async function listAll(prefix: string): Promise<{ pathname: string }[]> {
   const out: { pathname: string }[] = [];
   let cursor: string | undefined;
@@ -35,79 +115,4 @@ export async function listAll(prefix: string): Promise<{ pathname: string }[]> {
     cursor = result.hasMore ? result.cursor : undefined;
   } while (cursor);
   return out;
-}
-
-const STOCK_FILENAME_RE = /Morning_Brief_(\d{4})-(\d{2})-(\d{2})\.(pdf|error)$/;
-
-async function readErrorReason(pathname: string): Promise<string | undefined> {
-  const result = await get(pathname, { access: 'private' });
-  if (!result || result.statusCode !== 200) return undefined;
-  try {
-    const text = await new Response(result.stream).text();
-    const parsed = JSON.parse(text);
-    return typeof parsed.reason === 'string' ? parsed.reason : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
-  const blobs = await listAll(STOCK_PREFIX);
-  const entries: StockAnalysisEntry[] = [];
-  for (const { pathname } of blobs) {
-    const match = STOCK_FILENAME_RE.exec(pathname);
-    if (!match) continue;
-    const [, y, m, d, ext] = match;
-    const year = Number(y);
-    const month = Number(m);
-    const date = `${y}-${m}-${d}`;
-    const kind = ext === 'pdf' ? 'report' : 'error';
-    entries.push({
-      pathname,
-      date,
-      year,
-      month,
-      week: isoWeek(new Date(year, month - 1, Number(d))),
-      kind,
-      reason: kind === 'error' ? await readErrorReason(pathname) : undefined,
-    });
-  }
-  entries.sort((a, b) => b.date.localeCompare(a.date));
-  return entries;
-}
-
-const TRADE_FILENAME_RE = /^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})_TradingBot_([A-Za-z]+)_(.+)\.html$/;
-
-function toDetailLabel(rawDetail: string): string {
-  return rawDetail.replace(/_/g, ' ').replace(/--/g, '—').trim();
-}
-
-export async function listTrades(): Promise<TradeEntry[]> {
-  const blobs = await listAll(TRADES_PREFIX);
-  const entries: TradeEntry[] = [];
-  for (const { pathname } of blobs) {
-    const filename = pathname.slice(pathname.lastIndexOf('/') + 1);
-    const match = TRADE_FILENAME_RE.exec(filename);
-    if (!match) continue;
-    const [, y, mo, d, hh, mm, ss, strategy, rawDetail] = match;
-    const year = Number(y);
-    const month = Number(mo);
-    entries.push({
-      pathname,
-      filename,
-      date: `${y}-${mo}-${d}`,
-      time: `${hh}:${mm}:${ss}`,
-      year,
-      month,
-      week: isoWeek(new Date(year, month - 1, Number(d))),
-      strategy,
-      detail: toDetailLabel(rawDetail),
-    });
-  }
-  entries.sort((a, b) => (a.date + a.time < b.date + b.time ? 1 : -1));
-  return entries;
-}
-
-export function distinctStrategies(entries: TradeEntry[]): string[] {
-  return Array.from(new Set(entries.map((e) => e.strategy))).sort();
 }

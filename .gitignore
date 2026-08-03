@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local sync script state (tracks what's already in Blob -- see scripts/sync.mjs)
+/scripts/sync-state.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
