@@ -37,6 +37,19 @@ export default function OverviewPage() {
           </p>
           <p className="mt-2 text-xs text-zinc-500">Feeds the Trading Bot Trades tab.</p>
         </div>
+
+        <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+          <h2 className="mb-1 text-base font-semibold">
+            3. Consolidated Trade Ledger <span className="font-normal text-zinc-500">(tradingbot/reports)</span>
+          </h2>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Once per day after market close, builds one row per trade across
+            all 5 strategies above — every open trade&apos;s price and gain/loss
+            refresh daily, and every trade freezes permanently the moment it
+            closes. Closed trades older than 60 days are dropped automatically.
+          </p>
+          <p className="mt-2 text-xs text-zinc-500">Feeds the Trade Results tab.</p>
+        </div>
       </section>
 
       <section className="mb-8">
@@ -80,6 +93,23 @@ export default function OverviewPage() {
             strategy-filtering never mix.
           </li>
         </ul>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="mb-2 text-lg font-semibold">
+          How Request Analysis notifications work
+        </h2>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          Every submission on the{" "}
+          <Link href="/requests" className="text-blue-600 hover:underline dark:text-blue-400">
+            Request Analysis
+          </Link>{" "}
+          tab is saved immediately and also triggers an email — every time, no
+          batching or cooldown. Every notification uses the exact same fixed
+          subject line (&ldquo;Trading Analytics Hub: New Request
+          Submitted&rdquo;), so a single Gmail filter on that subject can
+          auto-label and archive them without any manual handling.
+        </p>
       </section>
 
       <section>

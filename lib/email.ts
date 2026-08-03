@@ -21,23 +21,20 @@ export async function sendRequestNotification(record: Omit<AnalysisRequest, "id"
     auth: { user, pass },
   });
 
+  // Fixed, identical subject on every submission -- so a single Gmail filter
+  // matching this exact text can reliably catch all of them, regardless of
+  // what was actually requested (that detail goes in the body instead).
+  const subject = "Trading Analytics Hub: New Request Submitted";
   const lines: string[] = [];
-  let subject: string;
 
   if (record.stock) {
     lines.push(`Analyze stock: ${record.stock.symbol}`);
     if (record.stock.extraCriteria) lines.push(`  Extra criteria: ${record.stock.extraCriteria}`);
-    subject = `Trading Analytics Hub: New request -- analyze ${record.stock.symbol}`;
-  } else {
-    subject = "Trading Analytics Hub: New request";
   }
 
   if (record.optionsTest) {
     lines.push(`Test strategy: ${record.optionsTest.strategy} on ${record.optionsTest.symbol}`);
     if (record.optionsTest.notes) lines.push(`  Notes: ${record.optionsTest.notes}`);
-    if (!record.stock) {
-      subject = `Trading Analytics Hub: New request -- test ${record.optionsTest.strategy} on ${record.optionsTest.symbol}`;
-    }
   }
 
   const submittedAt = new Date(record.submittedAt).toLocaleString("en-US", {
