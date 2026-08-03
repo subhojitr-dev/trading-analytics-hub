@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { saveAnalysisRequest } from "@/lib/requests";
+import { sendRequestNotification } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(url, { status: 303 });
   }
 
-  await saveAnalysisRequest({
+  const record = {
     submittedAt: new Date().toISOString(),
     stock: hasStockRequest
       ? { symbol: stockSymbol, extraCriteria: extraCriteria || null }
@@ -27,7 +28,17 @@ export async function POST(request: NextRequest) {
     optionsTest: hasOptionsRequest
       ? { symbol: optionsSymbol, strategy: strategyName, notes: strategyNotes || null }
       : null,
-  });
+  };
+
+  await saveAnalysisRequest(record);
+
+  try {
+    await sendRequestNotification(record);
+  } catch (e) {
+    // Don't let an email hiccup break the submission -- the request is
+    // already saved and visible on the Requests tab either way.
+    console.error("Failed to send request notification email:", e);
+  }
 
   const url = new URL("/requests", request.url);
   url.searchParams.set("submitted", "1");
