@@ -195,7 +195,7 @@ export const STRATEGY_INFO: Record<string, StrategyDetail> = {
   Strangle: {
     label: "Strangle (Earnings Play)",
     blurb:
-      "Ahead of earnings, buys both a call and a put on the same stock — profits if it moves sharply in either direction. Only enters when the stock has a history of big earnings moves and options aren't already priced expensively.",
+      "Ahead of earnings, buys both a call and a put on the same stock — profits if it moves sharply in either direction. Only enters when the stock has a history of big earnings moves and options aren't already priced expensively. Judges the call and put together as one position (never one leg alone) and closes both once the combined value moves 20% in either direction, at any time before or after earnings.",
     usefulWhen: "Betting on volatility itself rather than a direction, around a binary catalyst like earnings.",
     Diagram: StrangleDiagram,
   },
