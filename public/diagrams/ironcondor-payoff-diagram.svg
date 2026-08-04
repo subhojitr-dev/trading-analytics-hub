@@ -1,0 +1,67 @@
+<svg viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Iron condor payoff at expiration</title>
+  <desc>An iron condor profits in a flat band between the two short strikes, and loses money only if the price breaks past one of the long strikes on either wing. Illustrative SPY example: short put 515, long put 510, short call 565, long call 570, net credit 1.70 per share.</desc>
+
+  <rect width="1200" height="640" fill="#0b0d10"/>
+
+  <text x="600" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#f5f5f5">Iron Condor Payoff at Expiration</text>
+  <text x="600" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#9aa0a6">Illustrative SPY example — short strikes 515/565, wings 5 points out, $1.70/share credit collected</text>
+
+  <!-- Formula reference box -->
+  <rect x="800" y="98" width="290" height="80" rx="10" fill="#151a21" stroke="#7dd3fc" stroke-width="1.5"/>
+  <text x="945" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="12.5" font-weight="700" fill="#4ade80">Max Profit = Net Credit x 100</text>
+  <text x="945" y="136" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">both short strikes finish safe</text>
+  <text x="945" y="156" text-anchor="middle" font-family="Arial, sans-serif" font-size="12.5" font-weight="700" fill="#f87171">Max Loss = (Wing Width - Credit) x 100</text>
+  <text x="945" y="172" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">price breaks past a long strike</text>
+
+  <!-- Axes -->
+  <line x1="120" y1="480" x2="1080" y2="480" stroke="#3b4552" stroke-width="1.5"/>
+  <text x="1095" y="486" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">SPY price →</text>
+  <text x="600" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#9aa0a6">Break-even line (profit = $0)</text>
+  <line x1="120" y1="380" x2="1080" y2="380" stroke="#3b4552" stroke-width="1" stroke-dasharray="3,5"/>
+
+  <!-- Shaded profit region (flat middle, between short strikes) -->
+  <polygon points="430,180 650,180 650,380 430,380" fill="#14532d" opacity="0.4"/>
+
+  <!-- Shaded loss regions (beyond the wings) -->
+  <polygon points="150,380 150,480 310,480 310,380" fill="#7f1d1d" opacity="0.35"/>
+  <polygon points="770,380 770,480 1050,480 1050,380" fill="#7f1d1d" opacity="0.35"/>
+
+  <!-- Payoff line: flat loss, slope up, flat profit, slope down, flat loss -->
+  <polyline points="150,480 310,480 430,180 650,180 770,480 1050,480"
+            fill="none" stroke="#7dd3fc" stroke-width="3.5" stroke-linejoin="round"/>
+
+  <!-- Vertical markers -->
+  <g stroke="#6b7280" stroke-width="1" stroke-dasharray="4,4">
+    <line x1="310" y1="480" x2="310" y2="500"/>
+    <line x1="430" y1="180" x2="430" y2="500"/>
+    <line x1="650" y1="180" x2="650" y2="500"/>
+    <line x1="770" y1="480" x2="770" y2="500"/>
+  </g>
+
+  <text x="310" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f5f5f5">Long put</text>
+  <text x="310" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">$510</text>
+
+  <text x="430" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#4ade80">Short put</text>
+  <text x="430" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">$515</text>
+
+  <text x="650" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#4ade80">Short call</text>
+  <text x="650" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">$565</text>
+
+  <text x="770" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f5f5f5">Long call</text>
+  <text x="770" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">$570</text>
+
+  <!-- Zone labels -->
+  <text x="540" y="230" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#4ade80">Max profit — SPY stays in range</text>
+  <text x="540" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">+$170 total (the credit collected)</text>
+
+  <text x="230" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f87171">Max loss</text>
+  <text x="230" y="448" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">-$330 total</text>
+
+  <text x="910" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f87171">Max loss</text>
+  <text x="910" y="448" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">-$330 total</text>
+
+  <!-- Bottom caption -->
+  <text x="600" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">The exact opposite shape of a strangle — this trade wants the stock to do NOTHING dramatic,</text>
+  <text x="600" y="610" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">and only loses money if SPY breaks out past one of the wings before expiration.</text>
+</svg>

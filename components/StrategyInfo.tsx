@@ -168,6 +168,9 @@ export interface StrategyDetail {
   blurb: string;
   usefulWhen: string;
   Diagram: () => React.ReactElement;
+  /** Optional link to a larger, more detailed diagram (e.g. a payoff chart with
+   *  real numbers) -- opened separately, never replaces the compact Diagram above. */
+  detailedDiagramUrl?: string;
 }
 
 export const STRATEGY_INFO: Record<string, StrategyDetail> = {
@@ -191,6 +194,7 @@ export const STRATEGY_INFO: Record<string, StrategyDetail> = {
       "Repeatedly sells options on 4 stocks in a cycle: sell a put for premium → if assigned, own the shares → sell a call for more premium → if called away, repeat. Closes early once 70% of the max profit is captured.",
     usefulWhen: "Generating steady income from stocks you're happy to own, in sideways-to-up markets.",
     Diagram: FlywheelDiagram,
+    detailedDiagramUrl: "/diagrams/flywheel-diagram.svg",
   },
   Strangle: {
     label: "Strangle (Earnings Play)",
@@ -198,6 +202,7 @@ export const STRATEGY_INFO: Record<string, StrategyDetail> = {
       "Ahead of earnings, buys both a call and a put on the same stock — profits if it moves sharply in either direction. Only enters when the stock has a history of big earnings moves and options aren't already priced expensively. Judges the call and put together as one position (never one leg alone) and closes both once the combined value moves 20% in either direction, at any time before or after earnings.",
     usefulWhen: "Betting on volatility itself rather than a direction, around a binary catalyst like earnings.",
     Diagram: StrangleDiagram,
+    detailedDiagramUrl: "/diagrams/strangle-payoff-diagram.svg",
   },
   IronCondor: {
     label: "Iron Condor (SPY)",
@@ -205,5 +210,6 @@ export const STRATEGY_INFO: Record<string, StrategyDetail> = {
       "Sells a range on SPY using two credit spreads — a put spread below the market and a call spread above it — and profits as time passes if SPY stays inside that range. Adjusts the threatened side if SPY moves too close to a strike.",
     usefulWhen: "Calm, range-bound markets — betting on nothing dramatic happening.",
     Diagram: IronCondorDiagram,
+    detailedDiagramUrl: "/diagrams/ironcondor-payoff-diagram.svg",
   },
 };

@@ -1,0 +1,66 @@
+<svg viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Strangle payoff at expiration</title>
+  <desc>A long strangle loses money in a flat band between the put and call strikes, and only becomes profitable once the stock moves far enough past either strike to clear both breakeven points. Uses the real MSFT trade's numbers: put strike 355, call strike 435, total cost 30.54 per share.</desc>
+
+  <rect width="1200" height="640" fill="#0b0d10"/>
+
+  <text x="600" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#f5f5f5">Strangle Payoff at Expiration</text>
+  <text x="600" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#9aa0a6">Real example: the MSFT trade — $355 put + $435 call, $30.54/share total cost</text>
+
+  <!-- Formula reference box -->
+  <rect x="790" y="95" width="290" height="80" rx="10" fill="#151a21" stroke="#7dd3fc" stroke-width="1.5"/>
+  <text x="935" y="117" text-anchor="middle" font-family="Arial, sans-serif" font-size="12.5" font-weight="700" fill="#4ade80">Break-Even = Strike +/- Premium</text>
+  <text x="935" y="133" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">put strike - premium, or call strike + premium</text>
+  <text x="935" y="153" text-anchor="middle" font-family="Arial, sans-serif" font-size="12.5" font-weight="700" fill="#f87171">Max Loss = Total Premium x 100</text>
+  <text x="935" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">both legs expire worthless</text>
+
+  <!-- Axes -->
+  <line x1="120" y1="380" x2="1080" y2="380" stroke="#3b4552" stroke-width="1.5"/>
+  <text x="1095" y="386" font-family="Arial, sans-serif" font-size="13" fill="#6b7280">Stock price →</text>
+  <text x="600" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#9aa0a6">Break-even line (profit = $0)</text>
+
+  <!-- Shaded loss region (between the two breakevens, under the payoff line down to the flat bottom) -->
+  <polygon points="310,380 430,480 650,480 770,380" fill="#7f1d1d" opacity="0.35"/>
+
+  <!-- Shaded profit regions (outer wedges above the payoff line on both sides) -->
+  <polygon points="150,180 310,380 150,380" fill="#14532d" opacity="0.4"/>
+  <polygon points="1050,180 770,380 1050,380" fill="#14532d" opacity="0.4"/>
+
+  <!-- Payoff line -->
+  <polyline points="150,180 310,380 430,480 650,480 770,380 1050,180"
+            fill="none" stroke="#7dd3fc" stroke-width="3.5" stroke-linejoin="round"/>
+
+  <!-- Vertical markers -->
+  <g stroke="#6b7280" stroke-width="1" stroke-dasharray="4,4">
+    <line x1="310" y1="380" x2="310" y2="500"/>
+    <line x1="430" y1="480" x2="430" y2="500"/>
+    <line x1="650" y1="480" x2="650" y2="500"/>
+    <line x1="770" y1="380" x2="770" y2="500"/>
+  </g>
+
+  <text x="310" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#4ade80">Downside break-even</text>
+  <text x="310" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">~$324</text>
+
+  <text x="430" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f5f5f5">Put strike</text>
+  <text x="430" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">$355</text>
+
+  <text x="650" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f5f5f5">Call strike</text>
+  <text x="650" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">$435</text>
+
+  <text x="770" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#4ade80">Upside break-even</text>
+  <text x="770" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">~$466</text>
+
+  <!-- Zone labels -->
+  <text x="200" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#4ade80">Profit if the</text>
+  <text x="200" y="268" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#4ade80">stock falls hard</text>
+
+  <text x="1000" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#4ade80">Profit if the</text>
+  <text x="1000" y="268" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#4ade80">stock rises hard</text>
+
+  <text x="540" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#f87171">Loss zone — both legs worthless</text>
+  <text x="540" y="468" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#c7cdd4">Max loss: -$3,054 total (the full premium paid)</text>
+
+  <!-- Bottom caption -->
+  <text x="600" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">The stock has to clear ONE of the two break-evens before expiration for the trade to profit —</text>
+  <text x="600" y="610" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">landing anywhere between $355 and $435 loses the full premium, no matter which direction it came from.</text>
+</svg>

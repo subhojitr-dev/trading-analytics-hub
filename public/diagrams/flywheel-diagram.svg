@@ -1,0 +1,60 @@
+<svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Flywheel options wheel cycle</title>
+  <desc>Idle, sell a cash-secured put, either keep the premium and repeat or get assigned the stock, then sell covered calls and repeat until the shares get called away, which restarts the cycle at Idle.</desc>
+
+  <rect width="1200" height="560" fill="#0b0d10"/>
+
+  <text x="600" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#f5f5f5">The Flywheel Cycle</text>
+  <text x="600" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#9aa0a6">Income from selling options, repeating whether the stock goes up, down, or nowhere</text>
+
+  <defs>
+    <marker id="fwArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7dd3fc"/>
+    </marker>
+    <marker id="fwArrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4ade80"/>
+    </marker>
+  </defs>
+
+  <!-- IDLE box (left) -->
+  <rect x="60" y="200" width="220" height="130" rx="14" fill="#151a21" stroke="#3b4552" stroke-width="2"/>
+  <text x="170" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#f5f5f5">IDLE</text>
+  <text x="170" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#9aa0a6">No position.</text>
+  <text x="170" y="296" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#9aa0a6">Ready to sell a put.</text>
+
+  <line x1="280" y1="245" x2="352" y2="215" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#fwArrow)"/>
+  <text x="316" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#7dd3fc">Sell Put</text>
+
+  <!-- CSP box (middle) -->
+  <rect x="355" y="150" width="240" height="130" rx="14" fill="#151a21" stroke="#3b4552" stroke-width="2"/>
+  <text x="475" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f5f5">Short Put (CSP)</text>
+  <text x="475" y="221" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#9aa0a6">Collect premium upfront,</text>
+  <text x="475" y="239" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#9aa0a6">agree to buy if it drops</text>
+
+  <!-- CSP self-loop -->
+  <path d="M 400,150 C 400,80 550,80 550,150" fill="none" stroke="#4ade80" stroke-width="2.2" marker-end="url(#fwArrowGreen)"/>
+  <text x="475" y="105" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">Expires worthless, or closed at 70% profit</text>
+  <text x="475" y="122" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">→ keep the premium, sell a new put</text>
+
+  <line x1="595" y1="230" x2="667" y2="245" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#fwArrow)"/>
+  <text x="640" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#7dd3fc">Assigned</text>
+  <text x="640" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#7dd3fc">(stock dropped)</text>
+
+  <!-- CC box (right) -->
+  <rect x="670" y="200" width="250" height="130" rx="14" fill="#151a21" stroke="#3b4552" stroke-width="2"/>
+  <text x="795" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f5f5">Own Shares +</text>
+  <text x="795" y="268" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f5f5">Short Call (CC)</text>
+  <text x="795" y="292" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#9aa0a6">Sell calls against the shares</text>
+
+  <!-- CC self-loop -->
+  <path d="M 750,200 C 750,130 900,130 900,200" fill="none" stroke="#4ade80" stroke-width="2.2" marker-end="url(#fwArrowGreen)"/>
+  <text x="825" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">Expires worthless, or closed at 70% profit</text>
+  <text x="825" y="172" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">→ keep the shares, sell a new call</text>
+
+  <!-- Return arrow: CC back to IDLE (called away) -->
+  <path d="M 795,332 C 795,430 170,430 170,332" fill="none" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#fwArrow)"/>
+  <text x="480" y="455" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#f59e0b">Called away — shares sold at the strike, cycle restarts at IDLE</text>
+
+  <!-- Bottom caption -->
+  <text x="600" y="510" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">Runs on 4 stocks at once. Every outcome collects a premium — the only question is which stage happens next.</text>
+</svg>

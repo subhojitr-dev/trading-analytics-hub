@@ -40,6 +40,16 @@ export default function StrategyChip({
             <span className="font-medium text-zinc-700 dark:text-zinc-300">Useful when: </span>
             <span className="text-zinc-600 dark:text-zinc-400">{info.usefulWhen}</span>
           </p>
+          {info.detailedDiagramUrl && (
+            <a
+              href={info.detailedDiagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+            >
+              View detailed diagram →
+            </a>
+          )}
         </div>
       )}
     </div>
