@@ -43,7 +43,7 @@ export function extractSymbol(detail: string): string {
     if (/^[A-Z]{1,5}(\.[A-Z])?$/.test(token) && !NOT_A_TICKER.has(token)) return token;
   }
   // "ALL" is a word in "SELL ALL GOOGL" but also the Allstate ticker in "BUY ALL x10".
-  if (/bALLb/.test(detail)) return "ALL";
+  if (/\bALL\b/.test(detail)) return "ALL";
   return NO_SYMBOL;
 }
 
