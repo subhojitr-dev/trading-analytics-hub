@@ -163,6 +163,44 @@ function IronCondorDiagram() {
   );
 }
 
+function PharmaScanDiagram() {
+  return (
+    <svg viewBox="0 0 240 100" className="h-24 w-full">
+      <text x="28" y="45" fontSize="26" textAnchor="middle">
+        📰
+      </text>
+      <text x="28" y="72" fontSize="8" textAnchor="middle" fill="currentColor" opacity="0.7">
+        big mover + FDA /
+      </text>
+      <text x="28" y="82" fontSize="8" textAnchor="middle" fill="currentColor" opacity="0.7">
+        trial headline
+      </text>
+      <path d="M58,42 L96,42" stroke="currentColor" strokeWidth="2" markerEnd="url(#pharrow)" />
+      <text x="120" y="45" fontSize="26" textAnchor="middle">
+        💊
+      </text>
+      <text x="120" y="72" fontSize="8" textAnchor="middle" fill="currentColor" opacity="0.7">
+        pharma / biotech?
+      </text>
+      <text x="120" y="82" fontSize="8" textAnchor="middle" fill="#e11d48">
+        skip FDA rejections
+      </text>
+      <path d="M148,42 L186,42" stroke="currentColor" strokeWidth="2" markerEnd="url(#pharrow)" />
+      <text x="212" y="45" fontSize="26" textAnchor="middle">
+        🤖
+      </text>
+      <text x="212" y="72" fontSize="8" textAnchor="middle" fill="currentColor" opacity="0.7">
+        buy + trailing stop
+      </text>
+      <defs>
+        <marker id="pharrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="currentColor" />
+        </marker>
+      </defs>
+    </svg>
+  );
+}
+
 export interface StrategyDetail {
   label: string;
   blurb: string;
@@ -203,6 +241,13 @@ export const STRATEGY_INFO: Record<string, StrategyDetail> = {
     usefulWhen: "Betting on volatility itself rather than a direction, around a binary catalyst like earnings.",
     Diagram: StrangleDiagram,
     detailedDiagramUrl: "/diagrams/strangle-payoff-diagram.svg",
+  },
+  PharmaScan: {
+    label: "Pharma Scan (Catalyst Movers)",
+    blurb:
+      "Each morning, finds stocks making an unusually big move, then checks whether it is a pharma/biotech company with a real catalyst behind it — FDA approval, positive trial results. Qualifying stocks (max 3 per day; FDA rejections are skipped) are added to the Trailing Stop bot, which buys and protects them with the same stop-loss rules.",
+    usefulWhen: "Catching momentum from binary news events like drug trials and FDA decisions without watching headlines all day.",
+    Diagram: PharmaScanDiagram,
   },
   IronCondor: {
     label: "Iron Condor (SPY)",

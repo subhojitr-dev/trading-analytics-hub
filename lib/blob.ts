@@ -1,5 +1,6 @@
 import { list, get } from '@vercel/blob';
 import { cache } from 'react';
+import { withSymbolAndPharma } from './strategies';
 
 export const STOCK_PREFIX = 'stock-analysis/';
 export const TRADES_PREFIX = 'trading-bot/';
@@ -25,6 +26,7 @@ export interface TradeEntry {
   week: number;
   strategy: string;
   detail: string; // human-readable label derived from the filename
+  symbol: string; // ticker parsed from the label ("—" for multi-symbol reports)
 }
 
 export interface LedgerTrade {
@@ -90,11 +92,8 @@ export async function listStockAnalysis(): Promise<StockAnalysisEntry[]> {
 
 export async function listTrades(): Promise<TradeEntry[]> {
   const manifest = await getManifest();
-  return manifest.trades;
-}
-
-export function distinctStrategies(entries: TradeEntry[]): string[] {
-  return Array.from(new Set(entries.map((e) => e.strategy))).sort();
+  const ledgerRows = Object.values(manifest.ledger.trades ?? {});
+  return withSymbolAndPharma(manifest.trades as Omit<TradeEntry, 'symbol'>[], ledgerRows);
 }
 
 export async function getTradeLedger(): Promise<{ generatedAt: string | null; trades: LedgerEntry[] }> {

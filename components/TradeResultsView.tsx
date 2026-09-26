@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { LedgerEntry } from "@/lib/blob";
 
-const STRATEGY_ORDER = ["TrailingStop", "CopyTrade", "Flywheel", "Strangle", "IronCondor"];
+import { STRATEGY_ORDER, strategyLabel } from "@/lib/strategies";
 
 function fmtMoney(n: number | null): string {
   if (n === null || Number.isNaN(n)) return "—";
@@ -43,10 +43,7 @@ export default function TradeResultsView({
   const [strategyFilter, setStrategyFilter] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"OPEN" | "CLOSED" | "ALL">("OPEN");
 
-  const strategies = useMemo(() => {
-    const present = new Set(trades.map((t) => t.strategy));
-    return STRATEGY_ORDER.filter((s) => present.has(s));
-  }, [trades]);
+  const strategies = STRATEGY_ORDER;
 
   const filtered = useMemo(() => {
     return trades
@@ -54,7 +51,7 @@ export default function TradeResultsView({
       .filter((t) => (statusFilter === "ALL" ? true : t.status === statusFilter))
       .sort((a, b) => {
         if (a.status !== b.status) return a.status === "OPEN" ? -1 : 1;
-        if (a.strategy !== b.strategy) return a.strategy.localeCompare(b.strategy);
+        if (a.strategy !== b.strategy) return (STRATEGY_ORDER as readonly string[]).indexOf(a.strategy) - (STRATEGY_ORDER as readonly string[]).indexOf(b.strategy);
         return a.symbol.localeCompare(b.symbol);
       });
   }, [trades, strategyFilter, statusFilter]);
@@ -117,7 +114,7 @@ export default function TradeResultsView({
                   : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
               }`}
             >
-              {s}
+              {strategyLabel(s)}
             </button>
           ))}
         </div>
@@ -145,7 +142,13 @@ export default function TradeResultsView({
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={12} className="px-3 py-6 text-center text-zinc-500">
-                  No trades match the current filters.
+                  {strategyFilter && !trades.some((t) => t.strategy === strategyFilter)
+                    ? `No ${strategyLabel(strategyFilter)} trades recorded yet.${
+                        strategyFilter === "IronCondor"
+                          ? " The bot has scanned but never opened a condor (see the strategy diagram for why)."
+                          : ""
+                      }`
+                    : "No trades match the current filters."}
                 </td>
               </tr>
             ) : (
@@ -156,7 +159,7 @@ export default function TradeResultsView({
                     t.status === "CLOSED" ? "opacity-60" : ""
                   }`}
                 >
-                  <td className="whitespace-nowrap px-3 py-2">{t.strategy}</td>
+                  <td className="whitespace-nowrap px-3 py-2">{strategyLabel(t.strategy)}</td>
                   <td className="whitespace-nowrap px-3 py-2 font-medium">{t.symbol}</td>
                   <td className="whitespace-nowrap px-3 py-2 text-zinc-500">{t.trade_type}</td>
                   <td className="px-3 py-2">{t.qty}</td>

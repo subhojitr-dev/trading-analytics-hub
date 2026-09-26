@@ -166,6 +166,22 @@ async function readErrorReason(dateStr) {
   return null;
 }
 
+// put() that treats "already exists" as success. A previous run can upload a blob and then
+// die before saving sync-state.json; without this the next run would throw on that same
+// file forever and nothing after it would ever sync.
+async function putIfAbsent(pathname, body) {
+  try {
+    await put(pathname, body, { access: "private", addRandomSuffix: false, allowOverwrite: false });
+    return true;
+  } catch (err) {
+    if (/already exists/i.test(String(err && err.message))) {
+      console.log(`Already in Blob, adopting into local state: ${pathname}`);
+      return false;
+    }
+    throw err;
+  }
+}
+
 // ── Stock analysis: scan local PDFs, upload new ones / mark failures ──────────
 
 async function syncStockAnalysis(state) {
@@ -183,6 +199,7 @@ async function syncStockAnalysis(state) {
     if (!match) continue;
     const [, yyyy, mm, dd] = match;
     const dateStr = `${yyyy}-${mm}-${dd}`;
+    if (new Date(Number(yyyy), Number(mm) - 1, Number(dd)) < daysAgo(RETENTION_DAYS)) continue;
     const localPath = path.join(STOCK_SRC_DIR, filename);
     const info = await stat(localPath);
     const pdfPathname = `${STOCK_PREFIX}${yyyy}/${mm}/${filename}`;
@@ -213,9 +230,9 @@ async function syncStockAnalysis(state) {
           continue;
         }
         const body = await readFile(localPath);
-        await put(pdfPathname, body, { access: "private", addRandomSuffix: false, allowOverwrite: false });
+        const uploaded = await putIfAbsent(pdfPathname, body);
         state.stock[dateStr] = { pathname: pdfPathname, kind: "report", year: Number(yyyy), month: Number(mm), day: Number(dd) };
-        console.log(`Uploaded ${pdfPathname}`);
+        if (uploaded) console.log(`Uploaded ${pdfPathname}`);
         changed = true;
       }
     }
@@ -253,6 +270,7 @@ async function syncTrades(state) {
     const [, yyyy, mo, d, hh, mm, ss, strategy, rawDetail] = match;
     const pathname = `${TRADES_PREFIX}${yyyy}/${mo}/${filename}`;
     if (state.trades[pathname]) continue; // already uploaded, known locally
+    if (new Date(Number(yyyy), Number(mo) - 1, Number(d)) < daysAgo(RETENTION_DAYS)) continue; // past retention
 
     const info = await stat(localPath);
     if (info.size === 0) {
@@ -260,14 +278,14 @@ async function syncTrades(state) {
       continue;
     }
     const body = await readFile(localPath);
-    await put(pathname, body, { access: "private", addRandomSuffix: false, allowOverwrite: false });
+    const uploaded = await putIfAbsent(pathname, body);
     state.trades[pathname] = {
       pathname, filename,
       date: `${yyyy}-${mo}-${d}`, time: `${hh}:${mm}:${ss}`,
       year: Number(yyyy), month: Number(mo), day: Number(d),
       strategy, detail: toDetailLabel(rawDetail),
     };
-    console.log(`Uploaded ${pathname}`);
+    if (uploaded) console.log(`Uploaded ${pathname}`);
     changed = true;
   }
   return changed;

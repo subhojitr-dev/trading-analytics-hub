@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { STRATEGY_INFO } from "./StrategyInfo";
+import { strategyLabel } from "@/lib/strategies";
 
 export default function StrategyChip({
   strategy,
@@ -29,7 +30,7 @@ export default function StrategyChip({
             : "bg-zinc-200 text-zinc-700 hover:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
         }`}
       >
-        {strategy}
+        {strategyLabel(strategy)}
       </button>
       {hovered && info && (
         <div className="absolute left-0 top-full z-50 mt-2 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-zinc-200 bg-white p-3 text-left shadow-lg dark:border-zinc-700 dark:bg-zinc-900">

@@ -1,8 +1,8 @@
-<svg viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg" role="img">
+<svg viewBox="0 0 1200 998" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>Iron condor payoff at expiration</title>
   <desc>An iron condor profits in a flat band between the two short strikes, and loses money only if the price breaks past one of the long strikes on either wing. Illustrative SPY example: short put 515, long put 510, short call 565, long call 570, net credit 1.70 per share.</desc>
 
-  <rect width="1200" height="640" fill="#0b0d10"/>
+  <rect width="1200" height="998" fill="#0b0d10"/>
 
   <text x="600" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#f5f5f5">Iron Condor Payoff at Expiration</text>
   <text x="600" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#9aa0a6">Illustrative SPY example — short strikes 515/565, wings 5 points out, $1.70/share credit collected</text>
@@ -64,4 +64,18 @@
   <!-- Bottom caption -->
   <text x="600" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">The exact opposite shape of a strangle — this trade wants the stock to do NOTHING dramatic,</text>
   <text x="600" y="610" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">and only loses money if SPY breaks out past one of the wings before expiration.</text>
+    <!-- ACTUAL TRADES box -->
+  <rect x="60" y="650" width="1080" height="308" rx="10" fill="#151a21" stroke="#7dd3fc" stroke-width="1.5"/>
+  <text x="80" y="680" xml:space="preserve" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#f87171">ACTUAL TRADES (as of 2026-09-26):  NONE — the bot has not opened a single iron condor yet.</text>
+  <text x="80" y="702" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Strategy: Iron Condor on SPY / IWM / GLD — 14 DTE, short strikes ≈0.20 delta, 50% profit target, stop at 2× credit, 2</text>
+  <text x="80" y="724" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">    contracts, needs net credit ≥ 33% of max loss.</text>
+  <text x="80" y="746" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Only real order attempt — 2026-06-26, IWM @ $298.18:  short put $286 / long put $284  ·  short call $308 / long call $310  ·</text>
+  <text x="80" y="768" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">    expiry 2026-07-10  ·  credit $0.72 ($1.28 risk, 36%).</text>
+  <text x="80" y="790" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#fbbf24">→ REJECTED by Alpaca (403): insufficient options buying power ($521 available vs $56,856 required for the short put). Nothing</text>
+  <text x="80" y="812" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#fbbf24">    was filled.</text>
+  <text x="80" y="834" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">All other scans (SPY 06-26, GLD 09-11, and more) were skipped: e.g. SPY credit $1.47 on $3.53 risk = 29% &lt; 33% minimum; GLD</text>
+  <text x="80" y="856" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">    credit $0.39 on $1.61 risk = 20%.</text>
+  <text x="80" y="878" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">The 4 iron-condor emails dated 2026-06-19 (OPENED SPY 520/515P·575/580C, ADJUSTMENT, CLOSED IWM) were notification tests, not</text>
+  <text x="80" y="900" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">    real trades. The strikes in the chart above are illustrative.</text>
+  <text x="80" y="922" xml:space="preserve" font-family="Arial, sans-serif" font-size="12" fill="#7dd3fc">Trade Results and the Trading Bot Trades tab will show real condors here automatically once the bot places one.</text>
 </svg>

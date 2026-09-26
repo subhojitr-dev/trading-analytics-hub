@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { TradeEntry } from "@/lib/blob";
 
-export default function TradeCard({ trade }: { trade: TradeEntry }) {
+export default function TradeCard({ trade, showDate = false }: { trade: TradeEntry; showDate?: boolean }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ export default function TradeCard({ trade }: { trade: TradeEntry }) {
           </span>
           <span className="truncate">{trade.detail}</span>
         </span>
-        <span className="shrink-0 text-xs text-zinc-500">{trade.time}</span>
+        <span className="shrink-0 text-xs text-zinc-500">{showDate ? `${trade.date} ` : ""}{trade.time}</span>
       </button>
       {open && (
         <iframe
