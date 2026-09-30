@@ -5,7 +5,7 @@ import DateTreeNav from "./DateTreeNav";
 import TradeCard from "./TradeCard";
 import StrategyChip from "./StrategyChip";
 import type { YearGroup } from "@/lib/tree";
-import type { TradeEntry, LedgerEntry } from "@/lib/blob";
+import type { TradeEntry, LedgerEntry, LedgerLeg } from "@/lib/blob";
 import { formatDateLong } from "@/lib/date";
 import { STRATEGY_ORDER, NO_SYMBOL, strategyLabel } from "@/lib/strategies";
 
@@ -20,39 +20,101 @@ function signed(n: number): string {
   })}`;
 }
 
+function LegsTable({ legs }: { legs: LedgerLeg[] }) {
+  return (
+    <div className="mt-2 overflow-x-auto">
+      <table className="w-full text-xs border-collapse">
+        <thead>
+          <tr className="text-zinc-500 border-b border-zinc-200 dark:border-zinc-700">
+            <th className="text-left py-1 pr-3 font-medium">Role</th>
+            <th className="text-left py-1 pr-3 font-medium">Side</th>
+            <th className="text-left py-1 pr-3 font-medium">Type</th>
+            <th className="text-right py-1 pr-3 font-medium">Strike</th>
+            <th className="text-right py-1 pr-3 font-medium">Entry Premium</th>
+            {"current" in legs[0] && <th className="text-right py-1 font-medium">Current Mid</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {legs.map((leg, i) => {
+            const isShort = leg.side === "short";
+            return (
+              <tr key={i} className="border-b border-zinc-100 dark:border-zinc-800 last:border-0">
+                <td className="py-1 pr-3 font-medium text-zinc-700 dark:text-zinc-300">{leg.role}</td>
+                <td className="py-1 pr-3">
+                  <span className={`rounded px-1 py-0.5 font-mono font-semibold ${
+                    isShort
+                      ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                      : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                  }`}>
+                    {leg.side.toUpperCase()}
+                  </span>
+                </td>
+                <td className="py-1 pr-3">
+                  <span className={`font-mono font-medium ${
+                    leg.type === "CALL" ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
+                  }`}>
+                    {leg.type}
+                  </span>
+                </td>
+                <td className="py-1 pr-3 text-right font-mono">${leg.strike?.toFixed(2) ?? "—"}</td>
+                <td className="py-1 pr-3 text-right font-mono">
+                  {leg.premium != null ? (
+                    <span className={isShort ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}>
+                      {isShort ? "+" : "−"}${leg.premium.toFixed(2)}
+                    </span>
+                  ) : "—"}
+                </td>
+                {"current" in leg && (
+                  <td className="py-1 text-right font-mono text-zinc-500">
+                    {leg.current != null ? `$${leg.current.toFixed(2)}` : "—"}
+                  </td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 // One line of the per-stock "position record" -- the ledger's view of a single trade
 // (open date, entry -> current/exit price, P&L). It is what makes a strategy whose
 // bot sends few or no email alerts (Flywheel, Iron Condor) still show a full history.
 function LedgerLine({ row }: { row: LedgerEntry }) {
   const pos = row.gain_dollars >= 0;
+  const hasLegs = row.legs && row.legs.length > 0;
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-md bg-zinc-50 px-3 py-1.5 text-xs dark:bg-zinc-900">
-      <span
-        className={`rounded px-1.5 py-0.5 font-medium ${
-          row.status === "OPEN"
-            ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
-            : "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200"
-        }`}
-      >
-        {row.status}
-      </span>
-      <span className="font-medium">{row.trade_type}</span>
-      <span className="text-zinc-500">
-        {row.opened_at ?? "opened —"} → {row.closed_at ?? "still open"}
-      </span>
-      <span className="text-zinc-500">
-        {money(row.entry_price)} → {money(row.current_price)}
-      </span>
-      <span
-        className={`font-mono font-semibold ${
-          pos ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
-        }`}
-      >
-        {signed(row.gain_dollars)} ({row.gain_pct >= 0 ? "+" : ""}
-        {row.gain_pct.toFixed(2)}%)
-      </span>
-      {row.close_reason && <span className="text-zinc-500">{row.close_reason}</span>}
-      {row.notes && <span className="truncate text-zinc-400">{row.notes}</span>}
+    <div className="rounded-md bg-zinc-50 px-3 py-2 text-xs dark:bg-zinc-900">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+        <span
+          className={`rounded px-1.5 py-0.5 font-medium ${
+            row.status === "OPEN"
+              ? "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+              : "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200"
+          }`}
+        >
+          {row.status}
+        </span>
+        <span className="font-medium">{row.trade_type}</span>
+        <span className="text-zinc-500">
+          {row.opened_at ?? "opened —"} → {row.closed_at ?? "still open"}
+        </span>
+        <span className="text-zinc-500">
+          {money(row.entry_price)} → {money(row.current_price)}
+        </span>
+        <span
+          className={`font-mono font-semibold ${
+            pos ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+          }`}
+        >
+          {signed(row.gain_dollars)} ({row.gain_pct >= 0 ? "+" : ""}
+          {row.gain_pct.toFixed(2)}%)
+        </span>
+        {row.close_reason && <span className="text-zinc-500">{row.close_reason}</span>}
+        {row.notes && <span className="truncate text-zinc-400">{row.notes}</span>}
+      </div>
+      {hasLegs && <LegsTable legs={row.legs!} />}
     </div>
   );
 }

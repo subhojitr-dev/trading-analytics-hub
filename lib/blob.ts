@@ -29,6 +29,15 @@ export interface TradeEntry {
   symbol: string; // ticker parsed from the label ("—" for multi-symbol reports)
 }
 
+export interface LedgerLeg {
+  role: string;       // "Short Put", "Long Call", etc.
+  side: 'short' | 'long';
+  type: 'PUT' | 'CALL';
+  strike: number | null;
+  premium: number | null;  // entry price (credit received or debit paid)
+  current?: number | null; // current mid price (omitted for closed legs with no exit price)
+}
+
 export interface LedgerTrade {
   strategy: string;
   symbol: string;
@@ -44,6 +53,7 @@ export interface LedgerTrade {
   closed_at: string | null;
   close_reason: string | null;
   notes: string;
+  legs?: LedgerLeg[];
 }
 
 export interface LedgerEntry extends LedgerTrade {
