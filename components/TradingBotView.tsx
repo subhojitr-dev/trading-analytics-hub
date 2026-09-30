@@ -93,10 +93,20 @@ function RiskRow({ label, value, sub }: { label: string; value: string; sub?: st
 function RiskPanel({ risk, strategy }: { risk: RiskMetrics; strategy: string }) {
   if (strategy === "IronCondor") {
     const r = risk as IronCondorRisk;
+    const daysLabel = r.days_to_expiry != null
+      ? r.days_to_expiry <= 0 ? "expires today" : `${r.days_to_expiry}d remaining`
+      : null;
     return (
       <div className="mt-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-xs">
         <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400 mb-1">Risk Summary</p>
         <RiskRow label="Net credit collected" value={`$${r.net_credit.toFixed(2)}/share`} sub={`($${(r.net_credit * 100).toFixed(0)} total)`} />
+        {r.short_put_strike != null && r.short_call_strike != null && (
+          <RiskRow
+            label="Best case — expire worthless"
+            value={`SPY stays $${r.short_put_strike} – $${r.short_call_strike}`}
+            sub={r.expiry ? `by ${r.expiry}${daysLabel ? ` (${daysLabel})` : ""} → keep full $${(r.net_credit * 100).toFixed(0)}` : undefined}
+          />
+        )}
         <RiskRow
           label="Profit target (50%)"
           value={`cost-to-close ≤ $${r.profit_target_credit.toFixed(2)}/share`}
@@ -105,10 +115,10 @@ function RiskPanel({ risk, strategy }: { risk: RiskMetrics; strategy: string }) 
         <RiskRow
           label="Stop-loss trigger (2×)"
           value={`cost-to-close ≥ $${r.stop_loss_credit.toFixed(2)}/share`}
-          sub={`max loss $${r.stop_loss_dollars.toFixed(0)}`}
+          sub={`cuts loss to $${r.stop_loss_dollars.toFixed(0)}`}
         />
         <RiskRow
-          label="Max possible loss"
+          label="Max possible loss (if spread fills)"
           value={r.max_loss_per_share != null ? `$${r.max_loss_per_share.toFixed(2)}/share` : "—"}
           sub={r.max_loss_dollars != null ? `($${r.max_loss_dollars.toFixed(0)} total, spread ${r.wing_width} wide)` : undefined}
         />

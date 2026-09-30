@@ -47,6 +47,10 @@ export interface IronCondorRisk {
   max_loss_per_share: number | null;
   max_loss_dollars: number | null;
   wing_width: number;
+  short_put_strike: number | null;
+  short_call_strike: number | null;
+  expiry: string | null;
+  days_to_expiry: number | null;
 }
 
 export interface StrangleRisk {
