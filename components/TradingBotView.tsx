@@ -5,9 +5,9 @@ import DateTreeNav from "./DateTreeNav";
 import TradeCard from "./TradeCard";
 import StrategyChip from "./StrategyChip";
 import type { YearGroup } from "@/lib/tree";
-import type { TradeEntry, LedgerEntry, LedgerLeg } from "@/lib/blob";
+import type { TradeEntry, LedgerEntry, LedgerLeg, RiskMetrics, IronCondorRisk, StrangleRisk, TrailingStopRisk } from "@/lib/blob";
 import { formatDateLong } from "@/lib/date";
-import { STRATEGY_ORDER, NO_SYMBOL, strategyLabel } from "@/lib/strategies";
+import { STRATEGY_ORDER, NO_SYMBOL, strategyLabel, strategyDescription } from "@/lib/strategies";
 
 function money(n: number | null): string {
   return n === null ? "—" : `$${n.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
@@ -78,12 +78,77 @@ function LegsTable({ legs }: { legs: LedgerLeg[] }) {
   );
 }
 
+function RiskRow({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-2 py-0.5">
+      <span className="text-zinc-500 text-xs shrink-0">{label}</span>
+      <span className="font-mono text-xs font-medium text-right">
+        {value}
+        {sub && <span className="ml-1 text-zinc-400 font-normal text-[10px]">{sub}</span>}
+      </span>
+    </div>
+  );
+}
+
+function RiskPanel({ risk, strategy }: { risk: RiskMetrics; strategy: string }) {
+  if (strategy === "IronCondor") {
+    const r = risk as IronCondorRisk;
+    return (
+      <div className="mt-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-xs">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400 mb-1">Risk Summary</p>
+        <RiskRow label="Net credit collected" value={`$${r.net_credit.toFixed(2)}/share`} sub={`($${(r.net_credit * 100).toFixed(0)} total)`} />
+        <RiskRow
+          label="Profit target (50%)"
+          value={`cost-to-close ≤ $${r.profit_target_credit.toFixed(2)}/share`}
+          sub={`lock in $${r.profit_target_dollars.toFixed(0)}`}
+        />
+        <RiskRow
+          label="Stop-loss trigger (2×)"
+          value={`cost-to-close ≥ $${r.stop_loss_credit.toFixed(2)}/share`}
+          sub={`max loss $${r.stop_loss_dollars.toFixed(0)}`}
+        />
+        <RiskRow
+          label="Max possible loss"
+          value={r.max_loss_per_share != null ? `$${r.max_loss_per_share.toFixed(2)}/share` : "—"}
+          sub={r.max_loss_dollars != null ? `($${r.max_loss_dollars.toFixed(0)} total, spread ${r.wing_width} wide)` : undefined}
+        />
+      </div>
+    );
+  }
+  if (strategy === "Strangle") {
+    const r = risk as StrangleRisk;
+    return (
+      <div className="mt-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-xs">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400 mb-1">Risk Summary</p>
+        <RiskRow label="Total cost (both legs)" value={`$${r.total_cost.toFixed(2)}/share`} sub={`($${(r.total_cost * 100).toFixed(0)} total)`} />
+        <RiskRow label="Profit target (+20%)" value={`combined gain ≥ +20%`} sub={`+$${r.profit_target_dollars.toFixed(0)}`} />
+        <RiskRow label="Stop-loss (−20%)" value={`combined loss ≤ −20%`} sub={`−$${r.stop_loss_dollars.toFixed(0)}`} />
+      </div>
+    );
+  }
+  if (strategy === "TrailingStop" || strategy === "PharmaScan") {
+    const r = risk as TrailingStopRisk;
+    return (
+      <div className="mt-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-xs">
+        <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400 mb-1">Risk Summary</p>
+        <RiskRow label="Hard stop-loss (−10%)" value={`$${r.stop_loss_price.toFixed(2)}`} sub={`loss $${Math.abs(r.stop_loss_dollars).toFixed(0)}`} />
+        <RiskRow label="Trailing stop" value={r.trailing_active ? "ACTIVE — 5% below peak" : "Activates at +10% gain"} />
+        {r.highest_price != null && r.trailing_active && (
+          <RiskRow label="Highest price seen" value={`$${r.highest_price.toFixed(2)}`} sub={`trail stop @ $${(r.highest_price * 0.95).toFixed(2)}`} />
+        )}
+      </div>
+    );
+  }
+  return null;
+}
+
 // One line of the per-stock "position record" -- the ledger's view of a single trade
 // (open date, entry -> current/exit price, P&L). It is what makes a strategy whose
 // bot sends few or no email alerts (Flywheel, Iron Condor) still show a full history.
 function LedgerLine({ row }: { row: LedgerEntry }) {
   const pos = row.gain_dollars >= 0;
   const hasLegs = row.legs && row.legs.length > 0;
+  const hasRisk = row.risk_metrics != null && row.status === "OPEN";
   return (
     <div className="rounded-md bg-zinc-50 px-3 py-2 text-xs dark:bg-zinc-900">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
@@ -115,6 +180,7 @@ function LedgerLine({ row }: { row: LedgerEntry }) {
         {row.notes && <span className="truncate text-zinc-400">{row.notes}</span>}
       </div>
       {hasLegs && <LegsTable legs={row.legs!} />}
+      {hasRisk && <RiskPanel risk={row.risk_metrics!} strategy={row.strategy} />}
     </div>
   );
 }
@@ -239,6 +305,16 @@ export default function TradingBotView({
         {activeFilters ? (
           bySymbol && bySymbol.length > 0 ? (
             <>
+              {strategyFilter && strategyDescription(strategyFilter) && (
+                <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-900">
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
+                    How {strategyLabel(strategyFilter)} works
+                  </p>
+                  <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    {strategyDescription(strategyFilter)}
+                  </p>
+                </div>
+              )}
               <p className="text-xs text-zinc-500">
                 Grouped by stock, oldest first — each stock reads as one trade from beginning to end.
               </p>
@@ -267,7 +343,19 @@ export default function TradingBotView({
               ))}
             </>
           ) : (
-            <p className="text-sm text-zinc-500">{emptyMessage}</p>
+            <div className="space-y-3">
+              {strategyFilter && strategyDescription(strategyFilter) && (
+                <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-900">
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-400">
+                    How {strategyLabel(strategyFilter)} works
+                  </p>
+                  <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                    {strategyDescription(strategyFilter)}
+                  </p>
+                </div>
+              )}
+              <p className="text-sm text-zinc-500">{emptyMessage}</p>
+            </div>
           )
         ) : selected ? (
           <div>

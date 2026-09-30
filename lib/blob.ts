@@ -38,6 +38,37 @@ export interface LedgerLeg {
   current?: number | null; // current mid price (omitted for closed legs with no exit price)
 }
 
+export interface IronCondorRisk {
+  net_credit: number;
+  profit_target_credit: number;
+  profit_target_dollars: number;
+  stop_loss_credit: number;
+  stop_loss_dollars: number;
+  max_loss_per_share: number | null;
+  max_loss_dollars: number | null;
+  wing_width: number;
+}
+
+export interface StrangleRisk {
+  total_cost: number;
+  profit_target_pct: number;
+  profit_target_dollars: number;
+  stop_loss_pct: number;
+  stop_loss_dollars: number;
+}
+
+export interface TrailingStopRisk {
+  stop_loss_pct: number;
+  stop_loss_price: number;
+  stop_loss_dollars: number;
+  trailing_trigger_pct: number;
+  trailing_stop_pct: number;
+  trailing_active: boolean;
+  highest_price: number | null;
+}
+
+export type RiskMetrics = IronCondorRisk | StrangleRisk | TrailingStopRisk;
+
 export interface LedgerTrade {
   strategy: string;
   symbol: string;
@@ -54,6 +85,7 @@ export interface LedgerTrade {
   close_reason: string | null;
   notes: string;
   legs?: LedgerLeg[];
+  risk_metrics?: RiskMetrics;
 }
 
 export interface LedgerEntry extends LedgerTrade {

@@ -25,6 +25,25 @@ export function strategyLabel(strategy: string): string {
   return STRATEGY_LABEL[strategy] ?? strategy;
 }
 
+export const STRATEGY_DESCRIPTIONS: Record<string, string> = {
+  TrailingStop:
+    "Buys shares of 15 watchlist stocks and protects them with a −10% hard stop-loss. Once a position rises 10%, a trailing stop activates that sits 5% below the highest price seen — so gains are locked in as the stock climbs but the position isn't sold prematurely. If a stock drops 20% from entry, the bot buys 10 more shares (ladder-in) to lower the average cost.",
+  PharmaScan:
+    "Every morning the bot scans biotech/pharma news for upcoming FDA decisions (PDUFA dates, Phase 3 results, approval events). Stocks with imminent catalysts are added to the Trailing Stop strategy for that day — same −10% stop and trailing stop rules apply, but the position is specifically sized for the binary event. Positions here were triggered by an FDA catalyst, not the regular watchlist.",
+  CopyTrade:
+    "Monitors Capitol Trades for new stock disclosures by Nancy Pelosi and Michael McCaul. When either politician files a new purchase, the bot copies it immediately — buying 10 shares of the same stock. Sells are never copied, only buys. The portfolio is capped at 10 simultaneous positions.",
+  Flywheel:
+    "The Options Wheel: a two-phase income strategy run on AVGO, COHR, NBIS, and GLW. Phase 1 — sell a cash-secured put (collect premium, obligate to buy shares if the stock falls to the strike). Phase 2 — if assigned (stock fell to strike), hold the shares and sell a covered call against them to collect more premium. Repeat the cycle. Each leg closes early at 70% profit captured.",
+  Strangle:
+    "2–3 weeks before a company's earnings report, buys both a call option and a put option on the same stock (a 'strangle'). The position profits if the stock moves sharply in either direction after earnings — it doesn't matter which way. The combined position closes at +20% gain or −20% loss. High implied volatility before the event makes the options expensive, so the bot skips entries where IV is already elevated.",
+  IronCondor:
+    "Sells a range on SPY (S&P 500 ETF): a put spread below the current price and a call spread above it — four option legs total. Collects premium upfront and profits as long as SPY stays between the two short strikes until expiration. Time decay works in favor of this trade every day it stays in range. Closes at 50% profit captured or when the cost to close hits 2× the original credit (stop-loss). If SPY drifts too close to one side, the bot rolls the threatened spread to a safer strike.",
+};
+
+export function strategyDescription(strategy: string): string | null {
+  return STRATEGY_DESCRIPTIONS[strategy] ?? null;
+}
+
 // Words that appear in trade-notification subjects and could be mistaken for a ticker.
 const NOT_A_TICKER = new Set([
   "PUT", "CALL", "BUY", "SELL", "ALL", "STOP", "LOSS", "HIT", "OPENED", "CLOSED", "SKIP",
