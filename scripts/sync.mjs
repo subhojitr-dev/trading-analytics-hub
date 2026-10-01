@@ -237,6 +237,62 @@ async function syncStockAnalysis(state) {
       }
     }
   }
+
+  if (await markRunsWithoutReport(state)) changed = true;
+  return changed;
+}
+
+// A run that crashes or hangs (e.g. the setSymbol "reading 'value'" crash, or
+// the 25-min hard timeout) writes neither a PDF nor an -ERROR.txt -- only its
+// {date}.log. Treat a run log with no matching PDF as a failed report so it
+// shows on the Errors tab. Today's run is only judged once it has logged a
+// FATAL line or its log has gone quiet for an hour.
+const LOG_FILENAME_RE = /^(\d{4})-(\d{2})-(\d{2})\.log$/;
+const STALE_RUN_MS = 60 * 60 * 1000;
+
+async function reasonFromRunLog(logPath) {
+  const lines = (await readFile(logPath, "utf8")).split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  const fatal = lines.find((l) => /FATAL/.test(l));
+  if (fatal) return { finished: true, reason: fatal.replace(/^\[[\d:]+\]\s*/, "").slice(0, 300) };
+  const last = (lines.findLast((l) => /^\[[\d:]+\]/.test(l)) ?? lines.at(-1) ?? "").replace(/^\[[\d:]+\]\s*/, "");
+  return { finished: false, reason: `Run stopped without finishing (no PDF). Last step logged: ${last.slice(0, 200)}` };
+}
+
+async function markRunsWithoutReport(state) {
+  let changed = false;
+  let filenames;
+  try {
+    filenames = await readdir(STOCK_LOGS_DIR);
+  } catch (err) {
+    console.warn(`Skipping run-log check: cannot read ${STOCK_LOGS_DIR} (${err.message})`);
+    return changed;
+  }
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  for (const filename of filenames) {
+    const match = LOG_FILENAME_RE.exec(filename);
+    if (!match) continue;
+    const [, yyyy, mm, dd] = match;
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    if (state.stock[dateStr]) continue; // already a report or a recorded failure
+    if (new Date(Number(yyyy), Number(mm) - 1, Number(dd)) < daysAgo(RETENTION_DAYS)) continue;
+
+    const logPath = path.join(STOCK_LOGS_DIR, filename);
+    const fromLog = await reasonFromRunLog(logPath);
+    if (dateStr === todayStr && !fromLog.finished) {
+      const info = await stat(logPath);
+      if (Date.now() - info.mtimeMs < STALE_RUN_MS) continue; // may still be running
+    }
+    const reason = (await readErrorReason(dateStr)) ?? fromLog.reason;
+    const errorPathname = `${STOCK_PREFIX}${yyyy}/${mm}/Morning_Brief_${dateStr}.error`;
+    await put(errorPathname, JSON.stringify({ reason }), {
+      access: "private", addRandomSuffix: false, allowOverwrite: true, contentType: "application/json",
+    });
+    state.stock[dateStr] = { pathname: errorPathname, kind: "error", reason, year: Number(yyyy), month: Number(mm), day: Number(dd) };
+    console.log(`Marked failed run (no PDF): ${dateStr}`);
+    changed = true;
+  }
   return changed;
 }
 
