@@ -1,8 +1,8 @@
-<svg viewBox="0 0 1200 1043" xmlns="http://www.w3.org/2000/svg" role="img">
+<svg viewBox="0 0 1200 1314" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>Strangle payoff at expiration</title>
   <desc>A long strangle loses money in a flat band between the put and call strikes, and only becomes profitable once the stock moves far enough past either strike to clear both breakeven points. Uses the real MSFT trade's numbers: put strike 355, call strike 435, total cost 30.54 per share.</desc>
 
-  <rect width="1200" height="1043" fill="#0b0d10"/>
+  <rect width="1200" height="1314" fill="#0b0d10"/>
 
   <text x="600" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#f5f5f5">Strangle Payoff at Expiration</text>
   <text x="600" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#9aa0a6">Real example: the MSFT trade — $355 put + $435 call, $30.54/share total cost</text>
@@ -63,106 +63,146 @@
   <!-- Bottom caption -->
   <text x="600" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">The stock has to clear ONE of the two break-evens before expiration for the trade to profit —</text>
   <text x="600" y="610" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">landing anywhere between $355 and $435 loses the full premium, no matter which direction it came from.</text>
-  <!-- ACTUAL TRADES box -->
-  <rect x="60" y="650" width="1080" height="357" rx="10" fill="#151a21" stroke="#7dd3fc" stroke-width="1.5"/>
-  <text x="600" y="676" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#f5f5f5">Actual trades placed by the bot (Strategy: Long Strangle — buy 1 call + 1 put, exit both legs at ±20% combined P&amp;L)</text>
-  <text x="600" y="694" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">Stock price = closing price on the entry date · Cost/share = call + put premium paid · all trades 1 contract (×100 shares)</text>
-  <text x="80" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Stock</text>
-  <text x="150" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Entered</text>
+  <!-- ACTUAL TRADES box: generated from strangle_state.json reconciled against Alpaca fills (2026-10-01) -->
+  <rect x="40" y="650" width="1120" height="644" rx="10" fill="#151a21" stroke="#7dd3fc" stroke-width="1.5"/>
+  <text x="600" y="676" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#f5f5f5">Every strangle the bot has placed — real Alpaca fills, as of Oct 1, 2026</text>
+  <text x="600" y="694" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">Stock px = close on the entry day → price when the last leg sold · 1 contract each (×100 shares) · open P&amp;L = sold legs + current value of held legs − cost</text>
+  <text x="60" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Stock</text>
+  <text x="125" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Entered → closed</text>
   <text x="250" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Stock px</text>
-  <text x="345" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Legs bought (strike)</text>
-  <text x="590" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Expiry</text>
-  <text x="690" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Cost / share</text>
-  <text x="800" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Earnings</text>
-  <text x="910" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Result</text>
-  <line x1="75" y1="724" x2="1125" y2="724" stroke="#3b4552"/>
-  <text x="80" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">TSLA</text>
-  <text x="150" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-01</text>
-  <text x="250" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$425.36</text>
-  <text x="345" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $390  +  Call $490</text>
-  <text x="590" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-09-18</text>
-  <text x="690" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$34.65</text>
-  <text x="800" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-22</text>
-  <text x="910" y="741" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$3,586 closed</text>
-  <text x="80" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">META</text>
-  <text x="150" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-08</text>
-  <text x="250" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$603.12</text>
-  <text x="345" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $560  +  Call $700</text>
-  <text x="590" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-10-16</text>
-  <text x="690" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$52.73</text>
-  <text x="800" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-29</text>
-  <text x="910" y="764" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$5,303 closed</text>
-  <text x="80" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">MSFT</text>
-  <text x="150" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-08</text>
-  <text x="250" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$383.11</text>
-  <text x="345" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $355  +  Call $435</text>
-  <text x="590" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-10-16</text>
-  <text x="690" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$30.54</text>
-  <text x="800" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-29</text>
-  <text x="910" y="787" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f87171">-$1,316 closed</text>
-  <text x="80" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">AMZN</text>
-  <text x="150" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-10</text>
-  <text x="250" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$245.35</text>
-  <text x="345" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $230  +  Call $280</text>
-  <text x="590" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-10-16</text>
-  <text x="690" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$19.97</text>
-  <text x="800" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-30</text>
-  <text x="910" y="810" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">OPEN</text>
-  <text x="80" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">RKLB</text>
-  <text x="150" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-21</text>
-  <text x="250" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$69.16</text>
-  <text x="345" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $60  +  Call $100</text>
-  <text x="590" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-10-16</text>
-  <text x="690" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$13.73</text>
-  <text x="800" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-08-06</text>
-  <text x="910" y="833" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f87171">-$334 closed</text>
-  <text x="80" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">COHR</text>
-  <text x="150" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-23</text>
-  <text x="250" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$313.27</text>
-  <text x="345" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $280  +  Call $460</text>
-  <text x="590" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-10-16</text>
-  <text x="690" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$67.34</text>
-  <text x="800" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-08-12</text>
-  <text x="910" y="856" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f87171">-$1,350 closed</text>
-  <text x="80" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">PANW</text>
-  <text x="150" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-07-30</text>
-  <text x="250" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$325.65</text>
-  <text x="345" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $290  +  Call $380</text>
-  <text x="590" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-10-16</text>
-  <text x="690" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$38.57</text>
-  <text x="800" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-08-18</text>
-  <text x="910" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$805 closed</text>
-  <text x="80" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">MRVL</text>
-  <text x="150" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-08-10</text>
-  <text x="250" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$208.65</text>
-  <text x="345" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $190  +  Call $310</text>
-  <text x="590" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-11-20</text>
-  <text x="690" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$40.16</text>
-  <text x="800" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-08-27</text>
-  <text x="910" y="902" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f87171">-$920 closed</text>
-  <text x="80" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">PANW</text>
-  <text x="150" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-08-11</text>
-  <text x="250" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$383.79</text>
-  <text x="345" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $340  +  Call $480</text>
-  <text x="590" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-11-20</text>
-  <text x="690" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$50.51</text>
-  <text x="800" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-09-01</text>
-  <text x="910" y="925" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f87171">-$1,014 closed</text>
-  <text x="80" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">AVGO</text>
-  <text x="150" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-08-12</text>
-  <text x="250" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$415.87</text>
-  <text x="345" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $390  +  Call $500</text>
-  <text x="590" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-11-20</text>
-  <text x="690" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$44.05</text>
-  <text x="800" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-09-02</text>
-  <text x="910" y="948" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">OPEN</text>
-  <text x="80" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">MU</text>
-  <text x="150" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-09-09</text>
-  <text x="250" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$1,027.70</text>
-  <text x="345" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Put $930  +  Call $1340</text>
-  <text x="590" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-12-18</text>
-  <text x="690" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$146.46</text>
-  <text x="800" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">2026-09-30</text>
-  <text x="910" y="971" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">OPEN</text>
-  <text x="600" y="1001" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">Source: strangle_state.json (strikes, expiry, premiums) + Alpaca daily bars (stock price). Open-trade P&amp;L is on the Trade Results tab.</text>
+  <text x="385" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Legs: paid → exit (per share)</text>
+  <text x="790" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Exit rules</text>
+  <text x="1000" y="718" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Result</text>
+  <line x1="55" y1="726" x2="1145" y2="726" stroke="#3b4552" stroke-width="1"/>
+  <text x="60" y="744" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">TSLA</text>
+  <text x="60" y="759" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Jul 22</text>
+  <text x="125" y="744" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Jul 1</text>
+  <text x="125" y="759" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">→ closed Sep 18</text>
+  <text x="250" y="744" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$425.36 → $321.71</text>
+  <text x="250" y="759" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">(-24.4%)</text>
+  <text x="385" y="744" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#4ade80">Put $390: paid $18.65 → sold $71.45 (Jul 23)</text>
+  <text x="385" y="759" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#f87171">Call $490: paid $15.90 → expired worthless (Sep 18)</text>
+  <text x="790" y="744" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">per-leg (old)</text>
+  <text x="1000" y="744" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$3,690 closed</text>
+  <text x="60" y="784" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">META</text>
+  <text x="60" y="799" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Jul 29</text>
+  <text x="125" y="784" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Jul 8</text>
+  <text x="125" y="799" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">→ closed Jul 30</text>
+  <text x="250" y="784" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$603.12 → $535.05</text>
+  <text x="250" y="799" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">(-11.3%)</text>
+  <text x="385" y="784" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#4ade80">Put $560: paid $29.75 → sold $48.35 (Jul 30)</text>
+  <text x="385" y="799" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#4ade80">Call $700: paid $22.70 → sold $57.45 (Jul 10)</text>
+  <text x="790" y="784" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">per-leg (old)</text>
+  <text x="1000" y="784" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$5,335 closed</text>
+  <text x="60" y="824" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">MSFT</text>
+  <text x="60" y="839" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Jul 29</text>
+  <text x="125" y="824" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Jul 8</text>
+  <text x="125" y="839" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="824" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$383.11</text>
+  <text x="385" y="824" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#f87171">Put $355: paid $16.45 → sold $1.08 (Aug 3)</text>
+  <text x="385" y="839" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Call $435: paid $13.85 → still held, worth $79.49</text>
+  <text x="790" y="824" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="839" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* call sale didn’t fill (Jul 13)</text>
+  <text x="1000" y="824" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">+$5,027 open</text>
+  <text x="1000" y="839" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="864" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">AMZN</text>
+  <text x="60" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Jul 30</text>
+  <text x="125" y="864" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Jul 10</text>
+  <text x="125" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="864" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$245.35</text>
+  <text x="385" y="864" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Put $230: paid $11.20 → still held, worth $0.74</text>
+  <text x="385" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#4ade80">Call $280: paid $8.50 → sold $11.15 (Jul 15)</text>
+  <text x="790" y="864" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* put never sold after Jul 15</text>
+  <text x="1000" y="864" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">−$780 open</text>
+  <text x="1000" y="879" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="904" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">RKLB</text>
+  <text x="60" y="919" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Aug 6</text>
+  <text x="125" y="904" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Jul 21</text>
+  <text x="125" y="919" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">→ closed Aug 6</text>
+  <text x="250" y="904" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$69.16 → $77.58</text>
+  <text x="250" y="919" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">(+12.2%)</text>
+  <text x="385" y="904" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#f87171">Put $60: paid $8.10 → sold $4.50 (Aug 6)</text>
+  <text x="385" y="919" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#4ade80">Call $100: paid $5.10 → sold $5.95 (Jul 22)</text>
+  <text x="790" y="904" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">mixed: 1st leg old rule</text>
+  <text x="1000" y="904" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f87171">−$275 closed</text>
+  <text x="60" y="944" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">COHR</text>
+  <text x="60" y="959" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Aug 12</text>
+  <text x="125" y="944" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Jul 23</text>
+  <text x="125" y="959" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="944" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$313.27</text>
+  <text x="385" y="944" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Put $280: paid $40.90 → still held, worth $4.42</text>
+  <text x="385" y="959" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#f87171">Call $460: paid $25.90 → sold $19.70 (Aug 4)</text>
+  <text x="790" y="944" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="959" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* put sale didn’t fill (Aug 4)</text>
+  <text x="1000" y="944" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">−$4,268 open</text>
+  <text x="1000" y="959" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="984" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">PANW</text>
+  <text x="60" y="999" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Aug 18</text>
+  <text x="125" y="984" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Jul 30</text>
+  <text x="125" y="999" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="984" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$325.65</text>
+  <text x="385" y="984" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#f87171">Put $290: paid $21.80 → sold $9.90 (Aug 5)</text>
+  <text x="385" y="999" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Call $380: paid $16.70 → still held, worth $25.64</text>
+  <text x="790" y="984" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="999" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* call sale didn’t fill (Aug 5)</text>
+  <text x="1000" y="984" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">−$296 open</text>
+  <text x="1000" y="999" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="1024" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">MRVL</text>
+  <text x="60" y="1039" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Aug 27</text>
+  <text x="125" y="1024" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Aug 10</text>
+  <text x="125" y="1039" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="1024" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$208.65</text>
+  <text x="385" y="1024" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Put $190: paid $23.05 → still held, worth $1.82</text>
+  <text x="385" y="1039" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Call $310: paid $17.05 → still held, worth $12.28</text>
+  <text x="790" y="1024" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="1039" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* neither sale filled (Aug 14)</text>
+  <text x="1000" y="1024" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">−$2,600 open</text>
+  <text x="1000" y="1039" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="1064" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">PANW</text>
+  <text x="60" y="1079" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Sep 1</text>
+  <text x="125" y="1064" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Aug 11</text>
+  <text x="125" y="1079" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="1064" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$383.79</text>
+  <text x="385" y="1064" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Put $340: paid $27.55 → still held, worth $9.69</text>
+  <text x="385" y="1079" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Call $480: paid $22.85 → still held, worth $8.99</text>
+  <text x="790" y="1064" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="1079" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* neither sale filled (Aug 19, 24)</text>
+  <text x="1000" y="1064" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">−$3,172 open</text>
+  <text x="1000" y="1079" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="1104" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">AVGO</text>
+  <text x="60" y="1119" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Sep 2</text>
+  <text x="125" y="1104" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Aug 12</text>
+  <text x="125" y="1119" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="1104" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$415.87</text>
+  <text x="385" y="1104" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Put $390: paid $25.55 → still held, worth $49.53</text>
+  <text x="385" y="1119" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#f87171">Call $500: paid $18.10 → sold $4.55 (Aug 19)</text>
+  <text x="790" y="1104" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="1119" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* put sale didn’t fill (Aug 19)</text>
+  <text x="1000" y="1104" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">+$1,044 open</text>
+  <text x="1000" y="1119" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="1144" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">MU</text>
+  <text x="60" y="1159" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Sep 30</text>
+  <text x="125" y="1144" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Sep 9</text>
+  <text x="125" y="1159" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="1144" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$1,027.70</text>
+  <text x="385" y="1144" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Put $930: paid $85.30 → still held, worth $35.08</text>
+  <text x="385" y="1159" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#f87171">Call $1340: paid $59.75 → sold $37.45 (Sep 28)</text>
+  <text x="790" y="1144" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="790" y="1159" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">* put sale didn’t fill (Sep 28)</text>
+  <text x="1000" y="1144" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">−$7,252 open</text>
+  <text x="1000" y="1159" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="60" y="1184" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#f5f5f5">TSLA</text>
+  <text x="60" y="1199" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#6b7280">earn Oct 21</text>
+  <text x="125" y="1184" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">Sep 30</text>
+  <text x="125" y="1199" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#fbbf24">→ still open</text>
+  <text x="250" y="1184" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">$354.89</text>
+  <text x="385" y="1184" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Put $325: paid $13.85 → still held, worth $13.32</text>
+  <text x="385" y="1199" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#fbbf24">Call $405: paid $11.60 → still held, worth $11.70</text>
+  <text x="790" y="1184" text-anchor="start" font-family="Arial, sans-serif" font-size="11.5" fill="#c7cdd4">combined ±20% (bot manages)</text>
+  <text x="1000" y="1184" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">−$43 open</text>
+  <text x="1000" y="1199" text-anchor="start" font-family="Arial, sans-serif" font-size="10.5" fill="#9aa0a6">unrealized</text>
+  <text x="600" y="1230" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">Exit rules: before Aug 3 the bot sold each leg on its own once that leg was up 10–15% (“old rule”); since Aug 3 it judges call + put together and closes both at ±20% of total cost.</text>
+  <text x="600" y="1248" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#fbbf24">* The old bot recorded these sales even though the order never filled, so it stopped managing the leg. Re-adopted Oct 1 from Alpaca — most are already past ±20%, so the bot will try to close them on its next run.</text>
+  <text x="600" y="1266" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#6b7280">Source: Alpaca order fills + positions (prices, dates), strangle_state.json (strikes, expiry, earnings), Alpaca bars (stock price).</text>
 </svg>
