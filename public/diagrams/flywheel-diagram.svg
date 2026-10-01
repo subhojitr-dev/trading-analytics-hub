@@ -1,8 +1,8 @@
-<svg viewBox="0 0 1200 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<svg viewBox="0 0 1200 940" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>Flywheel options wheel cycle</title>
-  <desc>Idle, sell a cash-secured put, either keep the premium and repeat or get assigned the stock, then sell covered calls and repeat until the shares get called away, which restarts the cycle at Idle.</desc>
+  <desc>Idle, sell a cash-secured put, either keep the premium and repeat or get assigned the stock, then sell covered calls and repeat until the shares get called away, which restarts the cycle at Idle. Below the cycle: a real NBIS trade the bot placed that went sell put, assigned, then five covered calls.</desc>
 
-  <rect width="1200" height="560" fill="#0b0d10"/>
+  <rect width="1200" height="940" fill="#0b0d10"/>
 
   <text x="600" y="48" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#f5f5f5">The Flywheel Cycle</text>
   <text x="600" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#9aa0a6">Income from selling options, repeating whether the stock goes up, down, or nowhere</text>
@@ -57,4 +57,65 @@
 
   <!-- Bottom caption -->
   <text x="600" y="510" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#c7cdd4">Runs on 4 stocks at once. Every outcome collects a premium — the only question is which stage happens next.</text>
+
+  <!-- REAL TRADE box: NBIS sell put -> assigned -> covered calls (from flywheel/wheel_state.json) -->
+  <rect x="60" y="545" width="1080" height="370" rx="10" fill="#151a21" stroke="#7dd3fc" stroke-width="1.5"/>
+  <text x="600" y="573" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#f5f5f5">Real trade placed by the bot: NBIS — sold a put, got assigned, then sold covered calls</text>
+  <text x="600" y="592" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#9aa0a6">All 1 contract (100 shares) · numbers from the bot’s own trade history · as of Oct 1, 2026</text>
+  <rect x="80" y="610" width="270" height="200" rx="10" fill="#0f1318" stroke="#3b4552" stroke-width="1.5"/>
+  <text x="95" y="638" text-anchor="start" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#7dd3fc">① Sell a cash-secured put</text>
+  <text x="95" y="664" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">Jun 22, 2026</text>
+  <text x="95" y="688" text-anchor="start" font-family="Arial, sans-serif" font-size="13" fill="#f5f5f5">NBIS $225 put, expiring Jul 10</text>
+  <text x="95" y="716" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">Premium collected</text>
+  <text x="95" y="740" text-anchor="start" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#4ade80">+$797</text>
+  <text x="95" y="762" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">($7.97/share × 100)</text>
+  <line x1="352" y1="710" x2="376" y2="710" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#fwArrow)"/>
+  <rect x="380" y="610" width="260" height="200" rx="10" fill="#0f1318" stroke="#3b4552" stroke-width="1.5"/>
+  <text x="395" y="638" text-anchor="start" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#7dd3fc">② Stock dropped → assigned</text>
+  <text x="395" y="664" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">Jul 15, 2026</text>
+  <text x="395" y="688" text-anchor="start" font-family="Arial, sans-serif" font-size="13" fill="#f5f5f5">Bought 100 shares at $225</text>
+  <text x="395" y="716" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">Effective cost per share</text>
+  <text x="395" y="740" text-anchor="start" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f5f5">$217.03</text>
+  <text x="395" y="762" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">($225 strike − $7.97 put premium)</text>
+  <line x1="642" y1="710" x2="666" y2="710" stroke="#7dd3fc" stroke-width="2.5" marker-end="url(#fwArrow)"/>
+  <rect x="670" y="610" width="450" height="200" rx="10" fill="#0f1318" stroke="#3b4552" stroke-width="1.5"/>
+  <text x="685" y="638" text-anchor="start" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#7dd3fc">③ Sell covered calls against the shares</text>
+  <text x="685" y="662" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Sold</text>
+  <text x="765" y="662" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Call strike</text>
+  <text x="840" y="662" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Expiry</text>
+  <text x="925" y="662" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Premium</text>
+  <text x="1000" y="662" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#7dd3fc">Result</text>
+  <text x="685" y="684" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Jul 15</text>
+  <text x="765" y="684" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$250</text>
+  <text x="840" y="684" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Jul 31</text>
+  <text x="925" y="684" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$652</text>
+  <text x="1000" y="684" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$459.55 (70% close)</text>
+  <text x="685" y="706" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Jul 24</text>
+  <text x="765" y="706" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$235</text>
+  <text x="840" y="706" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Aug 7</text>
+  <text x="925" y="706" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$717</text>
+  <text x="1000" y="706" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$717 (expired)</text>
+  <text x="685" y="728" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Aug 10</text>
+  <text x="765" y="728" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$245</text>
+  <text x="840" y="728" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Aug 28</text>
+  <text x="925" y="728" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$638</text>
+  <text x="1000" y="728" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$479 (70% close)</text>
+  <text x="685" y="750" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Aug 24</text>
+  <text x="765" y="750" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$242.50</text>
+  <text x="840" y="750" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Sep 11</text>
+  <text x="925" y="750" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$495</text>
+  <text x="1000" y="750" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$366.50 (70% close)</text>
+  <text x="685" y="772" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Sep 1</text>
+  <text x="765" y="772" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$227.50</text>
+  <text x="840" y="772" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Sep 18</text>
+  <text x="925" y="772" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$386</text>
+  <text x="1000" y="772" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#4ade80">+$386 (expired)</text>
+  <text x="685" y="794" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Sep 28</text>
+  <text x="765" y="794" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$265</text>
+  <text x="840" y="794" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">Oct 16</text>
+  <text x="925" y="794" text-anchor="start" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">$557</text>
+  <text x="1000" y="794" text-anchor="start" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fbbf24">OPEN</text>
+  <text x="600" y="846" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#4ade80">Premium banked so far on NBIS: $3,205.05 — 1 put + 5 covered calls, every one kept</text>
+  <text x="600" y="870" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#c7cdd4">The 100 shares are still held (about $233.80 on Oct 1 vs. $225 paid), and a 6th call is open — they haven’t been called away yet, so the wheel keeps turning.</text>
+  <text x="600" y="890" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#9aa0a6">GLW followed the same path: $150 put → assigned Jul 27 → 5 covered calls so far.</text>
 </svg>
