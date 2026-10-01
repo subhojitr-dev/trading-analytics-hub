@@ -5,7 +5,7 @@ import DateTreeNav from "./DateTreeNav";
 import TradeCard from "./TradeCard";
 import StrategyChip from "./StrategyChip";
 import type { YearGroup } from "@/lib/tree";
-import type { TradeEntry, LedgerEntry, LedgerLeg, RiskMetrics, IronCondorRisk, StrangleRisk, TrailingStopRisk } from "@/lib/blob";
+import type { TradeEntry, LedgerEntry, LedgerLeg, RiskMetrics, IronCondorRisk, StrangleRisk, TrailingStopRisk, PharmaWatch } from "@/lib/blob";
 import { formatDateLong } from "@/lib/date";
 import { STRATEGY_ORDER, NO_SYMBOL, strategyLabel, strategyDescription } from "@/lib/strategies";
 
@@ -152,6 +152,47 @@ function RiskPanel({ risk, strategy }: { risk: RiskMetrics; strategy: string }) 
   return null;
 }
 
+function pct(n: number): string {
+  return `${n >= 0 ? "+" : "−"}${Math.abs(n).toFixed(1)}%`;
+}
+
+// Pharma Scan only: biggest rise and biggest fall from the price when the
+// catalyst was flagged, whether or not the bot actually bought the stock.
+function PharmaWatchPanel({ w }: { w: PharmaWatch }) {
+  const tone = (n: number) =>
+    n >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400";
+  return (
+    <div className="mt-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-xs">
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-400 mb-1">
+        Since monitoring began · {w.added_at.slice(0, 16)}
+      </p>
+      <p className="mb-1 text-zinc-500">{w.catalyst.replace(/_/g, " ").toLowerCase()}: {w.headline}</p>
+      <RiskRow label="Price when flagged" value={`$${w.price_at_add.toFixed(2)}`} />
+      <div className="flex items-baseline justify-between gap-2 py-0.5">
+        <span className="text-zinc-500 text-xs shrink-0">Max up</span>
+        <span className={`font-mono text-xs font-semibold ${tone(w.high_pct)}`}>
+          {w.high_pct > 0 ? `${pct(w.high_pct)} → $${w.high_since_add.toFixed(2)}` : "never rose above the flagged price"}
+          {w.high_pct > 0 && <span className="ml-1 text-zinc-400 font-normal text-[10px]">on {w.high_date}</span>}
+        </span>
+      </div>
+      <div className="flex items-baseline justify-between gap-2 py-0.5">
+        <span className="text-zinc-500 text-xs shrink-0">Max down</span>
+        <span className={`font-mono text-xs font-semibold ${tone(Math.min(w.low_pct, 0))}`}>
+          {w.low_pct < 0 ? `${pct(w.low_pct)} → $${w.low_since_add.toFixed(2)}` : "never fell below the flagged price"}
+          {w.low_pct < 0 && <span className="ml-1 text-zinc-400 font-normal text-[10px]">on {w.low_date}</span>}
+        </span>
+      </div>
+      <div className="flex items-baseline justify-between gap-2 py-0.5">
+        <span className="text-zinc-500 text-xs shrink-0">Now</span>
+        <span className={`font-mono text-xs font-medium ${tone(w.current_pct)}`}>
+          {pct(w.current_pct)} → ${w.current_price.toFixed(2)}
+          <span className="ml-1 text-zinc-400 font-normal text-[10px]">as of {w.as_of}</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // One line of the per-stock "position record" -- the ledger's view of a single trade
 // (open date, entry -> current/exit price, P&L). It is what makes a strategy whose
 // bot sends few or no email alerts (Flywheel, Iron Condor) still show a full history.
@@ -159,6 +200,7 @@ function LedgerLine({ row }: { row: LedgerEntry }) {
   const pos = row.gain_dollars >= 0;
   const hasLegs = row.legs && row.legs.length > 0;
   const hasRisk = row.risk_metrics != null && row.status === "OPEN";
+  const watchOnly = row.status === "WATCHED";
   return (
     <div className="rounded-md bg-zinc-50 px-3 py-2 text-xs dark:bg-zinc-900">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
@@ -169,28 +211,35 @@ function LedgerLine({ row }: { row: LedgerEntry }) {
               : "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-200"
           }`}
         >
-          {row.status}
+          {watchOnly ? "MONITORED" : row.status}
         </span>
-        <span className="font-medium">{row.trade_type}</span>
-        <span className="text-zinc-500">
-          {row.opened_at ?? "opened —"} → {row.closed_at ?? "still open"}
-        </span>
-        <span className="text-zinc-500">
-          {money(row.entry_price)} → {money(row.current_price)}
-        </span>
-        <span
-          className={`font-mono font-semibold ${
-            pos ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
-          }`}
-        >
-          {signed(row.gain_dollars)} ({row.gain_pct >= 0 ? "+" : ""}
-          {row.gain_pct.toFixed(2)}%)
-        </span>
+        {watchOnly ? (
+          <span className="font-medium">flagged {row.opened_at} · not bought</span>
+        ) : (
+          <>
+            <span className="font-medium">{row.trade_type}</span>
+            <span className="text-zinc-500">
+              {row.opened_at ?? "opened —"} → {row.closed_at ?? "still open"}
+            </span>
+            <span className="text-zinc-500">
+              {money(row.entry_price)} → {money(row.current_price)}
+            </span>
+            <span
+              className={`font-mono font-semibold ${
+                pos ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+              }`}
+            >
+              {signed(row.gain_dollars)} ({row.gain_pct >= 0 ? "+" : ""}
+              {row.gain_pct.toFixed(2)}%)
+            </span>
+          </>
+        )}
         {row.close_reason && <span className="text-zinc-500">{row.close_reason}</span>}
         {row.notes && <span className="truncate text-zinc-400">{row.notes}</span>}
       </div>
       {hasLegs && <LegsTable legs={row.legs!} />}
       {hasRisk && <RiskPanel risk={row.risk_metrics!} strategy={row.strategy} />}
+      {row.strategy === "PharmaScan" && row.pharma_watch && <PharmaWatchPanel w={row.pharma_watch} />}
     </div>
   );
 }

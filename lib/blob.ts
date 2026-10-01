@@ -73,11 +73,30 @@ export interface TrailingStopRisk {
 
 export type RiskMetrics = IronCondorRisk | StrangleRisk | TrailingStopRisk;
 
+/** Pharma Scan only: how a flagged stock moved from the moment monitoring began. */
+export interface PharmaWatch {
+  added_at: string;
+  catalyst: string;
+  headline: string;
+  skip_reason?: string;
+  bought: boolean;
+  price_at_add: number;
+  high_since_add: number;
+  high_date: string;
+  high_pct: number;
+  low_since_add: number;
+  low_date: string;
+  low_pct: number;
+  current_price: number;
+  current_pct: number;
+  as_of: string;
+}
+
 export interface LedgerTrade {
   strategy: string;
   symbol: string;
   trade_type: string;
-  status: 'OPEN' | 'CLOSED';
+  status: 'OPEN' | 'CLOSED' | 'WATCHED';
   opened_at: string | null;
   qty: number;
   entry_price: number | null;
@@ -90,6 +109,7 @@ export interface LedgerTrade {
   notes: string;
   legs?: LedgerLeg[];
   risk_metrics?: RiskMetrics;
+  pharma_watch?: PharmaWatch;
 }
 
 export interface LedgerEntry extends LedgerTrade {

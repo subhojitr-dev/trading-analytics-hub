@@ -5,5 +5,7 @@ export const dynamic = "force-dynamic";
 
 export default async function TradeResultsPage() {
   const { generatedAt, trades } = await getTradeLedger();
-  return <TradeResultsView trades={trades} generatedAt={generatedAt} />;
+  // Pharma Scan "WATCHED" rows are monitoring results, not positions -- they
+  // live on the Trading Bot page, not in the P&L table.
+  return <TradeResultsView trades={trades.filter((t) => t.status !== "WATCHED")} generatedAt={generatedAt} />;
 }
