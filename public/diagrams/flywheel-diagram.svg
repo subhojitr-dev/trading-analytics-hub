@@ -1,4 +1,4 @@
-<svg viewBox="0 0 1200 940" xmlns="http://www.w3.org/2000/svg" role="img">
+<svg viewBox="0 0 1200 940" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="background:#0b0d10" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>Flywheel options wheel cycle</title>
   <desc>Idle, sell a cash-secured put, either keep the premium and repeat or get assigned the stock, then sell covered calls and repeat until the shares get called away, which restarts the cycle at Idle. Below the cycle: a real NBIS trade the bot placed that went sell put, assigned, then five covered calls.</desc>
 

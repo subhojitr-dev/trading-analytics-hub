@@ -1,4 +1,4 @@
-<svg viewBox="0 0 1200 1314" xmlns="http://www.w3.org/2000/svg" role="img">
+<svg viewBox="0 0 1200 1314" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="background:#0b0d10" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>Strangle payoff at expiration</title>
   <desc>A long strangle loses money in a flat band between the put and call strikes, and only becomes profitable once the stock moves far enough past either strike to clear both breakeven points. Uses the real MSFT trade's numbers: put strike 355, call strike 435, total cost 30.54 per share.</desc>
 
